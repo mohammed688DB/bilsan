@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6b4f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>بيلسان الريف المتحدة</title>
+<style>
+:root{--bg:#f4f6f3;--card:#fff;--ink:#1d2a22;--mute:#6b7a70;--line:#dfe5df;--pri:#2f6b4f;--pri2:#e5f0ea;--ok:#1f8a4c;--okbg:#e3f5ea;--bad:#b3261e;--badbg:#fbe9e7;--warn:#a86400;--warnbg:#fff3df;--sh:0 1px 3px rgba(0,0,0,.07)}
+@media (prefers-color-scheme:dark){:root{--bg:#121714;--card:#1b221e;--ink:#e6ece8;--mute:#93a39a;--line:#2c3630;--pri:#5cb38a;--pri2:#21352b;--ok:#5cc98a;--okbg:#1d3326;--bad:#ff8a80;--badbg:#3a1f1d;--warn:#ffb74d;--warnbg:#3a2c16;--sh:none}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Segoe UI",Tahoma,Arial,sans-serif;overflow-x:clip}
+header{background:var(--pri);color:#fff;padding:14px 16px 0}
+@media (prefers-color-scheme:dark){header{background:#1e3a2c}}
+header h1{margin:0;font-size:20px}
+header .sub{opacity:.8;font-size:13px}
+nav{display:flex;gap:2px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
+nav button{background:none;border:0;color:#fff;opacity:.75;padding:9px 14px;font:inherit;cursor:pointer;border-radius:8px 8px 0 0;white-space:nowrap}
+nav button.on{background:var(--bg);color:var(--ink);opacity:1;font-weight:600}
+main{max-width:1250px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:var(--sh);min-width:0}
+.card h2{margin:0 0 10px;font-size:17px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sp{flex:1}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.tile .k{color:var(--mute);font-size:13px}.tile .v{font-size:22px;font-weight:700;margin-top:2px}.tile .s{font-size:12px;color:var(--mute)}
+button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 13px;border-radius:8px;cursor:pointer}
+button:hover{border-color:var(--pri)}
+button.p{background:var(--pri);border-color:var(--pri);color:#fff}
+@media (prefers-color-scheme:dark){button.p{color:#0d1a13}}
+button.d{color:var(--bad)}
+button.sm{padding:3px 9px;font-size:13px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:0}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-offset:-1px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:6px 7px;text-align:right;white-space:nowrap}
+th{background:var(--pri2);font-weight:600;position:sticky;top:0}
+tfoot td{font-weight:700;background:var(--pri2)}
+td.n,th.n{text-align:left;direction:ltr;font-variant-numeric:tabular-nums}
+td input{width:72px;padding:3px 5px}
+td input.w{width:48px}
+#main th,#main td{padding:6px 5px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.tag{display:inline-block;padding:1px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}.tag.warn{background:var(--warnbg);color:var(--warn)}.tag.mu{background:var(--line);color:var(--mute)}
+.note{background:var(--warnbg);color:var(--warn);border-radius:8px;padding:8px 12px;font-size:13px;margin:8px 0}
+.info{background:var(--pri2);border-radius:8px;padding:8px 12px;font-size:13px;margin:8px 0}
+.mute{color:var(--mute)}
+.empty{text-align:center;color:var(--mute);padding:30px}
+dialog{border:0;border-radius:14px;padding:0;background:var(--card);color:var(--ink);width:min(560px,94vw);box-shadow:0 10px 40px rgba(0,0,0,.3)}
+dialog.wide{width:min(1250px,96vw)}
+.bankpv th,.bankpv td{text-align:left;border:1px solid var(--line);padding:9px 8px;font-size:13px}
+.bankpv th{background:var(--bg);font-weight:500;white-space:normal;min-width:48px}
+.bankpv .r{text-align:right}.bankpv .b{font-weight:700}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog .hd{padding:13px 16px;border-bottom:1px solid var(--line);font-weight:700}
+dialog .bd{padding:14px 16px;max-height:70vh;overflow:auto}
+dialog .ft{padding:11px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-start}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--mute);min-width:0}
+.fg label.full{grid-column:1/-1}
+.fg label input,.fg label select,.fg label textarea{color:var(--ink);font-size:15px}
+@media (max-width:560px){.fg{grid-template-columns:1fr}main{padding:10px}}
+.bar{height:10px;border-radius:5px;background:var(--pri)}
+.bar.e{background:var(--bad)}
+.badge{display:inline-block;min-width:19px;padding:0 5px;border-radius:10px;background:#d93025;color:#fff;font-size:12px;font-weight:700;line-height:19px;text-align:center}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 18px;border-radius:9px;opacity:0;transition:.3s;pointer-events:none;z-index:99}
+#toast.on{opacity:1}
+footer{text-align:center;color:var(--mute);font-size:12px;padding:18px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="coName">بيلسان الريف المتحدة</h1>
+  <div class="sub">الرواتب · الأرباح · المصروفات · الأعمال — يعمل بدون إنترنت</div>
+  <nav id="nav"></nav>
+</header>
+<main id="main"></main>
+<footer>البيانات محفوظة على هذا الجهاز فقط — خذ نسخة احتياطية من «الإعدادات والنسخ» بشكل دوري.</footer>
+<dialog id="dlg"><div class="hd" id="dlgT"></div><div class="bd" id="dlgB"></div><div class="ft" id="dlgF"></div></dialog>
+<div id="toast"></div>
+<iframe id="pf" style="display:none"></iframe>
+<input type="file" id="fileIn" style="display:none">
+<script>
+'use strict';
+const BANK_TPL={"styles": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac x16r2 xr\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\"><numFmts count=\"2\"><numFmt numFmtId=\"164\" formatCode=\"000000000000\"/><numFmt numFmtId=\"165\" formatCode=\"#,##0.000\"/></numFmts><fonts count=\"1\" x14ac:knownFonts=\"1\"><font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Arial\"/><family val=\"2\"/><charset val=\"178\"/><scheme val=\"minor\"/></font></fonts><fills count=\"2\"><fill><patternFill patternType=\"none\"/></fill><fill><patternFill patternType=\"gray125\"/></fill></fills><borders count=\"1\"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs><cellXfs count=\"4\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyAlignment=\"1\"><alignment wrapText=\"1\"/></xf><xf numFmtId=\"164\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/><xf numFmtId=\"165\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/></cellXfs><cellStyles count=\"1\"><cellStyle name=\"عادي\" xfId=\"0\" builtinId=\"0\"/></cellStyles><dxfs count=\"0\"/><tableStyles count=\"0\" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\"/><extLst><ext uri=\"{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:slicerStyles defaultSlicerStyle=\"SlicerStyleLight1\"/></ext><ext uri=\"{9260A510-F301-46a8-8635-F512D64BE5F5}\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\"><x15:timelineStyles defaultTimelineStyle=\"TimeSlicerStyleLight1\"/></ext></extLst></styleSheet>", "theme": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<a:theme xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" name=\"نسق Office\"><a:themeElements><a:clrScheme name=\"Office\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/></a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/></a:lt1><a:dk2><a:srgbClr val=\"44546A\"/></a:dk2><a:lt2><a:srgbClr val=\"E7E6E6\"/></a:lt2><a:accent1><a:srgbClr val=\"5B9BD5\"/></a:accent1><a:accent2><a:srgbClr val=\"ED7D31\"/></a:accent2><a:accent3><a:srgbClr val=\"A5A5A5\"/></a:accent3><a:accent4><a:srgbClr val=\"FFC000\"/></a:accent4><a:accent5><a:srgbClr val=\"4472C4\"/></a:accent5><a:accent6><a:srgbClr val=\"70AD47\"/></a:accent6><a:hlink><a:srgbClr val=\"0563C1\"/></a:hlink><a:folHlink><a:srgbClr val=\"954F72\"/></a:folHlink></a:clrScheme><a:fontScheme name=\"Office\"><a:majorFont><a:latin typeface=\"Calibri Light\" panose=\"020F0302020204030204\"/><a:ea typeface=\"\"/><a:cs typeface=\"\"/><a:font script=\"Jpan\" typeface=\"ＭＳ Ｐゴシック\"/><a:font script=\"Hang\" typeface=\"맑은 고딕\"/><a:font script=\"Hans\" typeface=\"宋体\"/><a:font script=\"Hant\" typeface=\"新細明體\"/><a:font script=\"Arab\" typeface=\"Times New Roman\"/><a:font script=\"Hebr\" typeface=\"Times New Roman\"/><a:font script=\"Thai\" typeface=\"Tahoma\"/><a:font script=\"Ethi\" typeface=\"Nyala\"/><a:font script=\"Beng\" typeface=\"Vrinda\"/><a:font script=\"Gujr\" typeface=\"Shruti\"/><a:font script=\"Khmr\" typeface=\"MoolBoran\"/><a:font script=\"Knda\" typeface=\"Tunga\"/><a:font script=\"Guru\" typeface=\"Raavi\"/><a:font script=\"Cans\" typeface=\"Euphemia\"/><a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/><a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/><a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/><a:font script=\"Thaa\" typeface=\"MV Boli\"/><a:font script=\"Deva\" typeface=\"Mangal\"/><a:font script=\"Telu\" typeface=\"Gautami\"/><a:font script=\"Taml\" typeface=\"Latha\"/><a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Orya\" typeface=\"Kalinga\"/><a:font script=\"Mlym\" typeface=\"Kartika\"/><a:font script=\"Laoo\" typeface=\"DokChampa\"/><a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/><a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/><a:font script=\"Viet\" typeface=\"Times New Roman\"/><a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/><a:font script=\"Geor\" typeface=\"Sylfaen\"/></a:majorFont><a:minorFont><a:latin typeface=\"Calibri\" panose=\"020F0502020204030204\"/><a:ea typeface=\"\"/><a:cs typeface=\"\"/><a:font script=\"Jpan\" typeface=\"ＭＳ Ｐゴシック\"/><a:font script=\"Hang\" typeface=\"맑은 고딕\"/><a:font script=\"Hans\" typeface=\"宋体\"/><a:font script=\"Hant\" typeface=\"新細明體\"/><a:font script=\"Arab\" typeface=\"Arial\"/><a:font script=\"Hebr\" typeface=\"Arial\"/><a:font script=\"Thai\" typeface=\"Tahoma\"/><a:font script=\"Ethi\" typeface=\"Nyala\"/><a:font script=\"Beng\" typeface=\"Vrinda\"/><a:font script=\"Gujr\" typeface=\"Shruti\"/><a:font script=\"Khmr\" typeface=\"DaunPenh\"/><a:font script=\"Knda\" typeface=\"Tunga\"/><a:font script=\"Guru\" typeface=\"Raavi\"/><a:font script=\"Cans\" typeface=\"Euphemia\"/><a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/><a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/><a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/><a:font script=\"Thaa\" typeface=\"MV Boli\"/><a:font script=\"Deva\" typeface=\"Mangal\"/><a:font script=\"Telu\" typeface=\"Gautami\"/><a:font script=\"Taml\" typeface=\"Latha\"/><a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Orya\" typeface=\"Kalinga\"/><a:font script=\"Mlym\" typeface=\"Kartika\"/><a:font script=\"Laoo\" typeface=\"DokChampa\"/><a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/><a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/><a:font script=\"Viet\" typeface=\"Arial\"/><a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/><a:font script=\"Geor\" typeface=\"Sylfaen\"/></a:minorFont></a:fontScheme><a:fmtScheme name=\"Office\"><a:fillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"110000\"/><a:satMod val=\"105000\"/><a:tint val=\"67000\"/></a:schemeClr></a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"105000\"/><a:satMod val=\"103000\"/><a:tint val=\"73000\"/></a:schemeClr></a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"105000\"/><a:satMod val=\"109000\"/><a:tint val=\"81000\"/></a:schemeClr></a:gs></a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/></a:gradFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:satMod val=\"103000\"/><a:lumMod val=\"102000\"/><a:tint val=\"94000\"/></a:schemeClr></a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:satMod val=\"110000\"/><a:lumMod val=\"100000\"/><a:shade val=\"100000\"/></a:schemeClr></a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"99000\"/><a:satMod val=\"120000\"/><a:shade val=\"78000\"/></a:schemeClr></a:gs></a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/></a:gradFill></a:fillStyleLst><a:lnStyleLst><a:ln w=\"6350\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/></a:ln><a:ln w=\"12700\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/></a:ln><a:ln w=\"19050\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/></a:ln></a:lnStyleLst><a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst><a:outerShdw blurRad=\"57150\" dist=\"19050\" dir=\"5400000\" algn=\"ctr\" rotWithShape=\"0\"><a:srgbClr val=\"000000\"><a:alpha val=\"63000\"/></a:srgbClr></a:outerShdw></a:effectLst></a:effectStyle></a:effectStyleLst><a:bgFillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:solidFill><a:schemeClr val=\"phClr\"><a:tint val=\"95000\"/><a:satMod val=\"170000\"/></a:schemeClr></a:solidFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:tint val=\"93000\"/><a:satMod val=\"150000\"/><a:shade val=\"98000\"/><a:lumMod val=\"102000\"/></a:schemeClr></a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:tint val=\"98000\"/><a:satMod val=\"130000\"/><a:shade val=\"90000\"/><a:lumMod val=\"103000\"/></a:schemeClr></a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:shade val=\"63000\"/><a:satMod val=\"120000\"/></a:schemeClr></a:gs></a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/></a:gradFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements><a:objectDefaults/><a:extraClrSchemeLst/><a:extLst><a:ext uri=\"{05A4C25C-085E-4340-85A3-A5531E510DB2}\"><thm15:themeFamily xmlns:thm15=\"http://schemas.microsoft.com/office/thememl/2012/main\" name=\"Office Theme\" id=\"{62F939B6-93AF-4DB8-9C6B-D6C7DFDC589F}\" vid=\"{4A3C46E8-61CC-4603-A589-7422A47A8E4A}\"/></a:ext></a:extLst></a:theme>", "printer": "SABlAHcAbABlAHQAdAAtAFAAYQBjAGsAYQByAGQAIABIAFAAIABDAG8AbABvAHIAIABMAGEAcwBlAHIAAAAAAAEEAwbcAOgDQ78AAgEAAQCaCzQIZAABAA8A//8CAAEA//8DAAEAQQA0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAgAAAEQBAAD/////R0lTNAAAAAAAAAAAAAAAAERJTlUiAHABzAMcAAXLkncAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAQAAU01USgAAAAAQAGABewBFADkANAAxADQANABGADgALQAwADMAQQAzAC0ANAAwADYAYQAtAEIAQgAxAEYALQAwADQAOABDADcAOAAyADIANgA4ADUANQB9AAAASW5wdXRCaW4AQXV0b1NlbGVjdABSRVNETEwAVW5pcmVzRExMAFBhcGVyU2l6ZQBMRVRURVIAT3JpZW50YXRpb24AUE9SVFJBSVQATWVkaWFUeXBlAEF1dG8AUmVzb2x1dGlvbgA2MDBEUEkAUGFnZU91dHB1dFF1YWxpdHkATm9ybWFsAENvbG9yTW9kZQBDb2xvcgBEb2N1bWVudE5VcAAxAENvbGxhdGUAT04ARHVwbGV4AE5PTkUAT3V0cHV0QmluAEF1dG8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAABWNERNAQAAAAAAAAAAAAAAAAAAAAAAAAA=", "parts": [["[Content_Types].xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\"><Default Extension=\"bin\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.printerSettings\"/><Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/><Default Extension=\"xml\" ContentType=\"application/xml\"/><Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\"/><Override PartName=\"/xl/worksheets/sheet1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/><Override PartName=\"/xl/worksheets/sheet2.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/><Override PartName=\"/xl/worksheets/sheet3.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/><Override PartName=\"/xl/worksheets/sheet4.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/><Override PartName=\"/xl/theme/theme1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.theme+xml\"/><Override PartName=\"/xl/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml\"/><Override PartName=\"/xl/sharedStrings.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml\"/><Override PartName=\"/xl/calcChain.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml\"/><Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\"/><Override PartName=\"/docProps/app.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\"/></Types>"}], ["_rels/.rels", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/><Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\"/><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/></Relationships>"}], ["xl/workbook.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x15 xr xr6 xr10 xr2\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr6=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision6\" xmlns:xr10=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision10\" xmlns:xr2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/revision2\"><fileVersion appName=\"xl\" lastEdited=\"7\" lowestEdited=\"6\" rupBuild=\"23029\"/><workbookPr/><mc:AlternateContent xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"><mc:Choice Requires=\"x15\"><x15ac:absPath url=\"C:\\Users\\Dell\\Desktop\\بيلسان الريف المتحدة\\\" xmlns:x15ac=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/ac\"/></mc:Choice></mc:AlternateContent><xr:revisionPtr revIDLastSave=\"0\" documentId=\"13_ncr:1_{B8FF2A23-63E0-4791-8E2B-A58CEB4226DC}\" xr6:coauthVersionLast=\"45\" xr6:coauthVersionMax=\"45\" xr10:uidLastSave=\"{00000000-0000-0000-0000-000000000000}\"/><bookViews><workbookView xWindow=\"-120\" yWindow=\"-120\" windowWidth=\"29040\" windowHeight=\"15840\" activeTab=\"3\" xr2:uid=\"{00000000-000D-0000-FFFF-FFFF00000000}\"/></bookViews><sheets><sheet name=\"جدول الرواتب\" sheetId=\"1\" r:id=\"rId1\"/><sheet name=\"الأرباح\" sheetId=\"2\" r:id=\"rId2\"/><sheet name=\"المصروفات\" sheetId=\"3\" r:id=\"rId3\"/><sheet name=\"الأعمال\" sheetId=\"4\" r:id=\"rId4\"/></sheets><calcPr calcId=\"191029\"/><extLst><ext uri=\"{140A7094-0E35-4892-8432-C4D2E57EDEB5}\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\"><x15:workbookPr chartTrackingRefBase=\"1\"/></ext></extLst></workbook>"}], ["xl/_rels/workbook.xml.rels", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId8\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/calcChain\" Target=\"calcChain.xml\"/><Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet3.xml\"/><Relationship Id=\"rId7\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/><Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet2.xml\"/><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet1.xml\"/><Relationship Id=\"rId6\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/><Relationship Id=\"rId5\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme\" Target=\"theme/theme1.xml\"/><Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet4.xml\"/></Relationships>"}], ["xl/worksheets/sheet1.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac xr xr2 xr3\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/revision2\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" xr:uid=\"{00000000-0001-0000-0000-000000000000}\"><dimension ref=\"A1:M1\"/><sheetViews><sheetView rightToLeft=\"1\" workbookViewId=\"0\"><selection activeCell=\"E18\" sqref=\"E18\"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14.25\" x14ac:dyDescent=\"0.2\"/><cols><col min=\"2\" max=\"2\" width=\"22.25\" bestFit=\"1\" customWidth=\"1\"/><col min=\"4\" max=\"4\" width=\"11.25\" customWidth=\"1\"/><col min=\"5\" max=\"5\" width=\"15.875\" bestFit=\"1\" customWidth=\"1\"/><col min=\"6\" max=\"6\" width=\"16.625\" customWidth=\"1\"/><col min=\"7\" max=\"7\" width=\"14.875\" customWidth=\"1\"/><col min=\"8\" max=\"8\" width=\"10.5\" bestFit=\"1\" customWidth=\"1\"/><col min=\"9\" max=\"9\" width=\"15\" customWidth=\"1\"/><col min=\"10\" max=\"10\" width=\"15.25\" customWidth=\"1\"/><col min=\"11\" max=\"11\" width=\"15.5\" customWidth=\"1\"/><col min=\"12\" max=\"12\" width=\"16.375\" customWidth=\"1\"/></cols><sheetData><row r=\"1\" spans=\"1:13\" ht=\"28.5\" x14ac:dyDescent=\"0.2\"><c r=\"A1\" t=\"s\"><v>0</v></c><c r=\"B1\" t=\"s\"><v>1</v></c><c r=\"C1\" t=\"s\"><v>2</v></c><c r=\"D1\" t=\"s\"><v>3</v></c><c r=\"E1\" t=\"s\"><v>4</v></c><c r=\"F1\" t=\"s\"><v>5</v></c><c r=\"G1\" t=\"s\"><v>6</v></c><c r=\"H1\" t=\"s\"><v>7</v></c><c r=\"I1\" t=\"s\"><v>8</v></c><c r=\"J1\" t=\"s\"><v>9</v></c><c r=\"K1\" t=\"s\"><v>10</v></c><c r=\"L1\" s=\"1\" t=\"s\"><v>11</v></c><c r=\"M1\" t=\"s\"><v>12</v></c></row></sheetData><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><pageSetup orientation=\"portrait\" horizontalDpi=\"4294967295\" verticalDpi=\"4294967295\" r:id=\"rId1\"/></worksheet>"}], ["xl/worksheets/sheet2.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac xr xr2 xr3\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/revision2\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" xr:uid=\"{18F205A7-3A81-4419-BF3D-F66CEA418C47}\"><dimension ref=\"A1:F1\"/><sheetViews><sheetView rightToLeft=\"1\" workbookViewId=\"0\"><selection activeCell=\"F6\" sqref=\"F6\"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14.25\" x14ac:dyDescent=\"0.2\"/><sheetData><row r=\"1\" spans=\"1:6\" x14ac:dyDescent=\"0.2\"><c r=\"A1\" t=\"s\"><v>17</v></c><c r=\"B1\" t=\"s\"><v>18</v></c><c r=\"C1\" t=\"s\"><v>19</v></c><c r=\"D1\" t=\"s\"><v>21</v></c><c r=\"E1\" t=\"s\"><v>22</v></c><c r=\"F1\" t=\"s\"><v>23</v></c></row></sheetData><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/></worksheet>"}], ["xl/worksheets/sheet3.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac xr xr2 xr3\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/revision2\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" xr:uid=\"{2BFBAC87-CA4E-4656-802C-3702B32F1C2A}\"><dimension ref=\"A1:F1\"/><sheetViews><sheetView rightToLeft=\"1\" workbookViewId=\"0\"><selection activeCell=\"G1\" sqref=\"G1\"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14.25\" x14ac:dyDescent=\"0.2\"/><sheetData><row r=\"1\" spans=\"1:6\" x14ac:dyDescent=\"0.2\"><c r=\"A1\" t=\"s\"><v>17</v></c><c r=\"B1\" t=\"s\"><v>24</v></c><c r=\"C1\" t=\"s\"><v>20</v></c><c r=\"D1\" t=\"s\"><v>25</v></c><c r=\"E1\" t=\"s\"><v>26</v></c><c r=\"F1\" t=\"s\"><v>27</v></c></row></sheetData><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/></worksheet>"}], ["xl/worksheets/sheet4.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac xr xr2 xr3\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\" xmlns:xr2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/revision2\" xmlns:xr3=\"http://schemas.microsoft.com/office/spreadsheetml/2016/revision3\" xr:uid=\"{CD9F25A1-18F5-47DC-B182-6D2D80708193}\"><dimension ref=\"A1:E1\"/><sheetViews><sheetView rightToLeft=\"1\" tabSelected=\"1\" workbookViewId=\"0\"><selection activeCell=\"F1\" sqref=\"F1\"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight=\"14.25\" x14ac:dyDescent=\"0.2\"/><sheetData><row r=\"1\" spans=\"1:5\" x14ac:dyDescent=\"0.2\"><c r=\"A1\" t=\"s\"><v>17</v></c><c r=\"B1\" t=\"s\"><v>28</v></c><c r=\"C1\" t=\"s\"><v>29</v></c><c r=\"D1\" t=\"s\"><v>30</v></c><c r=\"E1\" t=\"s\"><v>31</v></c></row></sheetData><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/></worksheet>"}], ["xl/theme/theme1.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<a:theme xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" name=\"نسق Office\"><a:themeElements><a:clrScheme name=\"Office\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/></a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/></a:lt1><a:dk2><a:srgbClr val=\"44546A\"/></a:dk2><a:lt2><a:srgbClr val=\"E7E6E6\"/></a:lt2><a:accent1><a:srgbClr val=\"5B9BD5\"/></a:accent1><a:accent2><a:srgbClr val=\"ED7D31\"/></a:accent2><a:accent3><a:srgbClr val=\"A5A5A5\"/></a:accent3><a:accent4><a:srgbClr val=\"FFC000\"/></a:accent4><a:accent5><a:srgbClr val=\"4472C4\"/></a:accent5><a:accent6><a:srgbClr val=\"70AD47\"/></a:accent6><a:hlink><a:srgbClr val=\"0563C1\"/></a:hlink><a:folHlink><a:srgbClr val=\"954F72\"/></a:folHlink></a:clrScheme><a:fontScheme name=\"Office\"><a:majorFont><a:latin typeface=\"Calibri Light\" panose=\"020F0302020204030204\"/><a:ea typeface=\"\"/><a:cs typeface=\"\"/><a:font script=\"Jpan\" typeface=\"ＭＳ Ｐゴシック\"/><a:font script=\"Hang\" typeface=\"맑은 고딕\"/><a:font script=\"Hans\" typeface=\"宋体\"/><a:font script=\"Hant\" typeface=\"新細明體\"/><a:font script=\"Arab\" typeface=\"Times New Roman\"/><a:font script=\"Hebr\" typeface=\"Times New Roman\"/><a:font script=\"Thai\" typeface=\"Tahoma\"/><a:font script=\"Ethi\" typeface=\"Nyala\"/><a:font script=\"Beng\" typeface=\"Vrinda\"/><a:font script=\"Gujr\" typeface=\"Shruti\"/><a:font script=\"Khmr\" typeface=\"MoolBoran\"/><a:font script=\"Knda\" typeface=\"Tunga\"/><a:font script=\"Guru\" typeface=\"Raavi\"/><a:font script=\"Cans\" typeface=\"Euphemia\"/><a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/><a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/><a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/><a:font script=\"Thaa\" typeface=\"MV Boli\"/><a:font script=\"Deva\" typeface=\"Mangal\"/><a:font script=\"Telu\" typeface=\"Gautami\"/><a:font script=\"Taml\" typeface=\"Latha\"/><a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Orya\" typeface=\"Kalinga\"/><a:font script=\"Mlym\" typeface=\"Kartika\"/><a:font script=\"Laoo\" typeface=\"DokChampa\"/><a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/><a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/><a:font script=\"Viet\" typeface=\"Times New Roman\"/><a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/><a:font script=\"Geor\" typeface=\"Sylfaen\"/></a:majorFont><a:minorFont><a:latin typeface=\"Calibri\" panose=\"020F0502020204030204\"/><a:ea typeface=\"\"/><a:cs typeface=\"\"/><a:font script=\"Jpan\" typeface=\"ＭＳ Ｐゴシック\"/><a:font script=\"Hang\" typeface=\"맑은 고딕\"/><a:font script=\"Hans\" typeface=\"宋体\"/><a:font script=\"Hant\" typeface=\"新細明體\"/><a:font script=\"Arab\" typeface=\"Arial\"/><a:font script=\"Hebr\" typeface=\"Arial\"/><a:font script=\"Thai\" typeface=\"Tahoma\"/><a:font script=\"Ethi\" typeface=\"Nyala\"/><a:font script=\"Beng\" typeface=\"Vrinda\"/><a:font script=\"Gujr\" typeface=\"Shruti\"/><a:font script=\"Khmr\" typeface=\"DaunPenh\"/><a:font script=\"Knda\" typeface=\"Tunga\"/><a:font script=\"Guru\" typeface=\"Raavi\"/><a:font script=\"Cans\" typeface=\"Euphemia\"/><a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/><a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/><a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/><a:font script=\"Thaa\" typeface=\"MV Boli\"/><a:font script=\"Deva\" typeface=\"Mangal\"/><a:font script=\"Telu\" typeface=\"Gautami\"/><a:font script=\"Taml\" typeface=\"Latha\"/><a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Orya\" typeface=\"Kalinga\"/><a:font script=\"Mlym\" typeface=\"Kartika\"/><a:font script=\"Laoo\" typeface=\"DokChampa\"/><a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/><a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/><a:font script=\"Viet\" typeface=\"Arial\"/><a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/><a:font script=\"Geor\" typeface=\"Sylfaen\"/></a:minorFont></a:fontScheme><a:fmtScheme name=\"Office\"><a:fillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"110000\"/><a:satMod val=\"105000\"/><a:tint val=\"67000\"/></a:schemeClr></a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"105000\"/><a:satMod val=\"103000\"/><a:tint val=\"73000\"/></a:schemeClr></a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"105000\"/><a:satMod val=\"109000\"/><a:tint val=\"81000\"/></a:schemeClr></a:gs></a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/></a:gradFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:satMod val=\"103000\"/><a:lumMod val=\"102000\"/><a:tint val=\"94000\"/></a:schemeClr></a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:satMod val=\"110000\"/><a:lumMod val=\"100000\"/><a:shade val=\"100000\"/></a:schemeClr></a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"99000\"/><a:satMod val=\"120000\"/><a:shade val=\"78000\"/></a:schemeClr></a:gs></a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/></a:gradFill></a:fillStyleLst><a:lnStyleLst><a:ln w=\"6350\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/></a:ln><a:ln w=\"12700\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/></a:ln><a:ln w=\"19050\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/></a:ln></a:lnStyleLst><a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst><a:outerShdw blurRad=\"57150\" dist=\"19050\" dir=\"5400000\" algn=\"ctr\" rotWithShape=\"0\"><a:srgbClr val=\"000000\"><a:alpha val=\"63000\"/></a:srgbClr></a:outerShdw></a:effectLst></a:effectStyle></a:effectStyleLst><a:bgFillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/></a:solidFill><a:solidFill><a:schemeClr val=\"phClr\"><a:tint val=\"95000\"/><a:satMod val=\"170000\"/></a:schemeClr></a:solidFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:tint val=\"93000\"/><a:satMod val=\"150000\"/><a:shade val=\"98000\"/><a:lumMod val=\"102000\"/></a:schemeClr></a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:tint val=\"98000\"/><a:satMod val=\"130000\"/><a:shade val=\"90000\"/><a:lumMod val=\"103000\"/></a:schemeClr></a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:shade val=\"63000\"/><a:satMod val=\"120000\"/></a:schemeClr></a:gs></a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/></a:gradFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements><a:objectDefaults/><a:extraClrSchemeLst/><a:extLst><a:ext uri=\"{05A4C25C-085E-4340-85A3-A5531E510DB2}\"><thm15:themeFamily xmlns:thm15=\"http://schemas.microsoft.com/office/thememl/2012/main\" name=\"Office Theme\" id=\"{62F939B6-93AF-4DB8-9C6B-D6C7DFDC589F}\" vid=\"{4A3C46E8-61CC-4603-A589-7422A47A8E4A}\"/></a:ext></a:extLst></a:theme>"}], ["xl/styles.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac x16r2 xr\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\"><numFmts count=\"2\"><numFmt numFmtId=\"164\" formatCode=\"000000000000\"/><numFmt numFmtId=\"165\" formatCode=\"#,##0.000\"/></numFmts><fonts count=\"1\" x14ac:knownFonts=\"1\"><font><sz val=\"11\"/><color theme=\"1\"/><name val=\"Arial\"/><family val=\"2\"/><charset val=\"178\"/><scheme val=\"minor\"/></font></fonts><fills count=\"2\"><fill><patternFill patternType=\"none\"/></fill><fill><patternFill patternType=\"gray125\"/></fill></fills><borders count=\"1\"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs><cellXfs count=\"4\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyAlignment=\"1\"><alignment wrapText=\"1\"/></xf><xf numFmtId=\"164\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/><xf numFmtId=\"165\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/></cellXfs><cellStyles count=\"1\"><cellStyle name=\"عادي\" xfId=\"0\" builtinId=\"0\"/></cellStyles><dxfs count=\"0\"/><tableStyles count=\"0\" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\"/><extLst><ext uri=\"{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:slicerStyles defaultSlicerStyle=\"SlicerStyleLight1\"/></ext><ext uri=\"{9260A510-F301-46a8-8635-F512D64BE5F5}\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\"><x15:timelineStyles defaultTimelineStyle=\"TimeSlicerStyleLight1\"/></ext></extLst></styleSheet>"}], ["xl/sharedStrings.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"36\" uniqueCount=\"32\"><si><t>NO</t></si><si><t>Employee Name</t></si><si><t>ID Type</t></si><si><t>ID Number</t></si><si><t>ReceivingBank</t></si><si><t>Account Number</t></si><si><t>Working Days</t></si><si><t>Extra Hours</t></si><si><t>Basic Salary</t></si><si><t>Extra Income</t></si><si><t>Deduction</t></si><si><t>Social Security Deduction</t></si><si><t>Net Salary</t></si><si><t></t></si><si><t></t></si><si><t></t></si><si><t></t></si><si><t>ت</t></si><si><t>أسم العامل</t></si><si><t>الرقم المدني</t></si><si><t>المبلغ</t></si><si><t>المبلغ الشهري</t></si><si><t>الملاحظات</t></si><si><t>دفع لا / نعم</t></si><si><t>نوع المعاملة</t></si><si><t>من قام بالدفع</t></si><si><t>التالريح</t></si><si><t>الجهة المستلمة</t></si><si><t>التاريخ</t></si><si><t>نوع العمل</t></si><si><t>القيمة</t></si><si><t xml:space=\"preserve\">الحالة </t></si></sst>"}], ["xl/worksheets/_rels/sheet1.xml.rels", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/printerSettings\" Target=\"../printerSettings/printerSettings1.bin\"/></Relationships>"}], ["xl/printerSettings/printerSettings1.bin", {"b": "SABlAHcAbABlAHQAdAAtAFAAYQBjAGsAYQByAGQAIABIAFAAIABDAG8AbABvAHIAIABMAGEAcwBlAHIAAAAAAAEEAwbcAOgDQ78AAgEAAQCaCzQIZAABAA8A//8CAAEA//8DAAEAQQA0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAgAAAEQBAAD/////R0lTNAAAAAAAAAAAAAAAAERJTlUiAHABzAMcAAXLkncAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAQAAU01USgAAAAAQAGABewBFADkANAAxADQANABGADgALQAwADMAQQAzAC0ANAAwADYAYQAtAEIAQgAxAEYALQAwADQAOABDADcAOAAyADIANgA4ADUANQB9AAAASW5wdXRCaW4AQXV0b1NlbGVjdABSRVNETEwAVW5pcmVzRExMAFBhcGVyU2l6ZQBMRVRURVIAT3JpZW50YXRpb24AUE9SVFJBSVQATWVkaWFUeXBlAEF1dG8AUmVzb2x1dGlvbgA2MDBEUEkAUGFnZU91dHB1dFF1YWxpdHkATm9ybWFsAENvbG9yTW9kZQBDb2xvcgBEb2N1bWVudE5VcAAxAENvbGxhdGUAT04ARHVwbGV4AE5PTkUAT3V0cHV0QmluAEF1dG8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAABWNERNAQAAAAAAAAAAAAAAAAAAAAAAAAA="}], ["xl/calcChain.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<calcChain xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"></calcChain>"}], ["docProps/core.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><dc:creator>محمد المقبالي</dc:creator><cp:lastModifiedBy>Dell</cp:lastModifiedBy><dcterms:created xsi:type=\"dcterms:W3CDTF\">2025-03-13T20:34:53Z</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">2026-10-03T05:58:44Z</dcterms:modified></cp:coreProperties>"}], ["docProps/app.xml", {"t": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"><Application>Microsoft Excel</Application><DocSecurity>0</DocSecurity><ScaleCrop>false</ScaleCrop><HeadingPairs><vt:vector size=\"2\" baseType=\"variant\"><vt:variant><vt:lpstr>أوراق العمل</vt:lpstr></vt:variant><vt:variant><vt:i4>4</vt:i4></vt:variant></vt:vector></HeadingPairs><TitlesOfParts><vt:vector size=\"4\" baseType=\"lpstr\"><vt:lpstr>جدول الرواتب</vt:lpstr><vt:lpstr>الأرباح</vt:lpstr><vt:lpstr>المصروفات</vt:lpstr><vt:lpstr>الأعمال</vt:lpstr></vt:vector></TitlesOfParts><Company></Company><LinksUpToDate>false</LinksUpToDate><SharedDoc>false</SharedDoc><HyperlinksChanged>false</HyperlinksChanged><AppVersion>16.0300</AppVersion></Properties>"}]]};
+const SEED={"emps":[]};
+const MOBILE=true;
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const BANK_HEAD=['NO','Employee Name','ID Type','ID Number','ReceivingBank','Account Number','Working Days','Extra Hours','Basic Salary','Extra Income','Deduction','Social Security Deduction','Net Salary'];
+const WSTAT=['جديد','قيد التنفيذ','منجز','مدفوع','ملغي'];
+const $=s=>document.querySelector(s);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const r3=x=>Math.round((+x||0)*1000)/1000;
+const money=x=>r3(x).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
+const pad=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const curMonth=()=>today().slice(0,7);
+const mName=m=>m?MONTHS[+m.slice(5,7)-1]+' '+m.slice(0,4):'';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200)}
+
+/* ================= التخزين (IndexedDB على الجهاز + نسخة في localStorage) ================= */
+const KEY='bilsan_db_v1';
+let DB=null,idb=null;
+function idbOpen(){return new Promise(res=>{try{const q=indexedDB.open('bilsan_db',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)}catch(e){res(null)}})}
+function idbGet(k){return new Promise(res=>{if(!idb)return res(null);try{const q=idb.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)}catch(e){res(null)}})}
+function idbSet(k,v){return new Promise(res=>{if(!idb)return res();try{const t=idb.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>res();t.onerror=()=>res()}catch(e){res()}})}
+function save(){DB.updated=Date.now();const s=JSON.stringify(DB);idbSet('db',s);try{localStorage.setItem(KEY,s)}catch(e){}
+  if(FH&&fhOk){clearTimeout(save.t);save.t=setTimeout(writeFile,600)}}
+/* حفظ تلقائي إضافي في ملف على قرص الجهاز (للكمبيوتر — Edge/Chrome) */
+let FH=null,fhOk=false,fhLast=0;
+async function writeFile(){try{const w=await FH.createWritable();await w.write(JSON.stringify(DB));await w.close();fhLast=Date.now()}catch(e){fhOk=false;render()}}
+async function pickSaveFile(){
+  if(!window.showSaveFilePicker)return alert('هذا المتصفح لا يدعم الحفظ في ملف. البيانات محفوظة في ذاكرة الجهاز داخل المتصفح، وخذ نسخة احتياطية يدوياً.');
+  try{FH=await showSaveFilePicker({suggestedName:'بيانات بيلسان الريف المتحدة.json',types:[{description:'JSON',accept:{'application/json':['.json']}}]})}catch(e){return}
+  await idbSet('fileH',FH);fhOk=true;await writeFile();render();toast('سيُحفظ كل تعديل في الملف تلقائياً');
+}
+async function relinkFile(){try{fhOk=(await FH.requestPermission({mode:'readwrite'}))==='granted'}catch(e){fhOk=false}if(fhOk)await writeFile();render()}
+async function stopFile(){FH=null;fhOk=false;await idbSet('fileH',null);render()}
+function blank(){return{v:1,updated:0,settings:{company:'بيلسان الريف المتحدة',dedMode:'neg',lastBackup:0},emps:[],payroll:{},profits:{},expenses:[],works:[],docs:[]}}
+function seedDB(){
+  const d=blank();
+  const m=curMonth(),rows=[];
+  (SEED&&SEED.emps||[]).forEach(e=>{
+    const emp={id:uid(),name:e.name,idType:e.idType,idNo:e.idNo,bank:e.bank,acct:e.acct,basic:e.basic,ss:e.ss,hourRate:0,fee:0,phone:'',active:true,notes:''};
+    d.emps.push(emp);
+    rows.push({...snap(emp),days:e.days,hours:e.hours,basic:e.basic,extra:e.extra,ded:e.ded,ss:e.ss,paid:false});
+  });
+  if(rows.length)d.payroll[m]={rows,created:Date.now()};
+  return d;
+}
+async function boot(){
+  idb=await idbOpen();
+  try{FH=await idbGet('fileH');if(FH)fhOk=(await FH.queryPermission({mode:'readwrite'}))==='granted'}catch(e){FH=null}
+  let s=await idbGet('db');
+  if(!s){try{s=localStorage.getItem(KEY)}catch(e){}}
+  DB=s?JSON.parse(s):seedDB();
+  DB.settings=Object.assign(blank().settings,DB.settings||{});DB.docs=DB.docs||[];
+  if(!s)save();
+  fixes();
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  render();
+  /* تنبيه انتهاء الوثائق عند فتح التطبيق — مرة واحدة في اليوم */
+  if(allAlerts().length&&DB.settings.alertShown!==today()){DB.settings.alertShown=today();save();showAlerts()}
+}
+
+/* ================= مساعدات البيانات ================= */
+const emp=id=>DB.emps.find(e=>e.id===id);
+const snap=e=>({emp:e.id,name:e.name,idType:e.idType,idNo:e.idNo,bank:e.bank,acct:e.acct});
+const net=r=>r3((+r.basic||0)+(+r.extra||0)-(+r.ded||0)-(+r.ss||0));
+function payTot(m){const p=DB.payroll[m];const t={n:0,basic:0,extra:0,ded:0,ss:0,net:0,paid:0};if(!p)return t;p.rows.forEach(r=>{t.n++;t.basic+=+r.basic||0;t.extra+=+r.extra||0;t.ded+=+r.ded||0;t.ss+=+r.ss||0;t.net+=net(r);if(r.paid)t.paid+=net(r)});return t}
+function profTot(m){const l=DB.profits[m]||[];let all=0,paid=0;l.forEach(r=>{all+=+r.amount||0;if(r.paid)paid+=+r.amount||0});return{all,paid,rest:all-paid,n:l.length}}
+const expIn=m=>DB.expenses.filter(x=>(x.date||'').startsWith(m));
+const workIn=m=>DB.works.filter(x=>(x.date||'').startsWith(m));
+function uniq(a){return[...new Set(a.filter(Boolean))]}
+/* وثائق العامل وتواريخ انتهائها — التنبيه قبل الانتهاء بـ alertDays يوم (افتراضي 30 = شهر) */
+const DOCS=[['res','الإقامة'],['civil','البطاقة المدنية'],['labour','بطاقة العمل'],['ins','التأمين الصحي']];
+const daysTo=d=>d?Math.round((new Date(d+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5):null;
+const alertDays=()=>+DB.settings.alertDays||30;
+const leftTxt=n=>n<0?`منتهية منذ ${-n} يوم`:n===0?'تنتهي اليوم':`باقي ${n} يوم`;
+function expAlerts(){const o=[];DB.emps.filter(e=>e.active).forEach(e=>DOCS.forEach(([k,t])=>{const d=(e.exp||{})[k],n=daysTo(d);if(n!=null&&n<=alertDays())o.push({who:e.name,ltr:1,sub:e.profession,t,d,n,act:`renewForm('${e.id}','${k}')`})}));return o.sort((a,b)=>a.n-b.n)}
+function coAlerts(){const o=[];(DB.docs||[]).filter(x=>!x.closed).forEach(x=>{const n=daysTo(x.expiry);if(n!=null&&n<=alertDays()){const e=x.emp&&emp(x.emp);o.push({who:e?e.name:DB.settings.company,ltr:!!e,sub:x.number?'رقم '+x.number:'',t:x.type,d:x.expiry,n,act:`docRenew('${x.id}')`})}});return o.sort((a,b)=>a.n-b.n)}
+const allAlerts=()=>[...coAlerts(),...expAlerts()].sort((a,b)=>a.n-b.n);
+const docTag=d=>{const n=daysTo(d);if(n==null)return'<span class="mute">—</span>';return`<span class="tag ${n<0?'bad':n<=alertDays()?'warn':'ok'}" title="${leftTxt(n)}">${d}</span>`};
+function addYears(d,y){const x=new Date((d||today())+'T00:00:00');x.setFullYear(x.getFullYear()+y);return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate())}
+function alertList(l){return`<div class="tw"><table><thead><tr><th>الوثيقة</th><th>المؤسسة / العامل</th><th>تاريخ الانتهاء</th><th>المدة</th><th></th></tr></thead><tbody>${l.map(a=>`<tr><td><b>${esc(a.t)}</b></td><td><span class="${a.ltr?'ltr':''}">${esc(a.who)}</span>${a.sub?` <span class="mute">— ${esc(a.sub)}</span>`:''}</td><td>${docTag(a.d)}</td><td><span class="tag ${a.n<0?'bad':'warn'}">${leftTxt(a.n)}</span></td><td><button class="sm p" onclick="${a.act}">تجديد</button></td></tr>`).join('')}</tbody></table></div>`}
+function printAlerts(){const l=allAlerts();printHTML('الوثائق المنتهية أو التي تنتهي خلال '+alertDays()+' يوم',`<table><thead><tr><th>ت</th><th>الوثيقة</th><th>المؤسسة / العامل</th><th>تاريخ الانتهاء</th><th>المدة</th></tr></thead><tbody>${l.map((a,i)=>`<tr><td>${i+1}</td><td>${esc(a.t)}</td><td>${esc(a.who)}${a.sub?' — '+esc(a.sub):''}</td><td>${a.d}</td><td>${leftTxt(a.n)}</td></tr>`).join('')}</tbody></table>`)}
+
+/* ---------- وثائق المؤسسة ---------- */
+const CODOCS=['السجل التجاري','المأذونية','عقد الإيجار','تأمين العمال','الفحص الطبي','تفتيش الحريق','التصريح البلدي'];
+const docStat=x=>{if(x.closed)return'<span class="tag mu">ملغاة</span>';const n=daysTo(x.expiry);if(n==null)return'<span class="mute">بدون تاريخ</span>';return`<span class="tag ${n<0?'bad':n<=alertDays()?'warn':'ok'}">${n<0||n<=alertDays()?leftTxt(n):'سارية — '+leftTxt(n)}</span>`};
+let DF='';
+function vDocs(){
+  DB.docs=DB.docs||[];
+  const al=coAlerts(),types=uniq([...CODOCS,...DB.docs.map(x=>x.type)]);
+  const l=DB.docs.filter(x=>!DF||x.type===DF).sort((a,b)=>(a.closed-b.closed)||((a.expiry||'9')>(b.expiry||'9')?1:-1));
+  const spent=DB.docs.reduce((s,x)=>s+(x.history||[]).reduce((t,h)=>t+(+h.cost||0),0),0);
+  return `${al.length?`<div class="card" style="border-color:var(--bad)"><div class="row"><h2 style="margin:0">⚠ وثائق تنتهي خلال ${alertDays()} يوم أو منتهية (${al.length})</h2></div>${alertList(al)}</div>`:''}
+  <div class="card"><div class="row"><h2 style="margin:0">وثائق المؤسسة</h2><span class="sp"></span><button class="sm" onclick="printCoDocs()">🖨 طباعة</button><button class="p" onclick="docForm()">+ وثيقة</button></div>
+  <div class="row" style="margin-top:10px">${types.map(t=>{const xs=DB.docs.filter(x=>x.type===t&&!x.closed);const w=xs.some(x=>{const n=daysTo(x.expiry);return n!=null&&n<=alertDays()});
+    return`<button class="sm" style="${DF===t?'border-color:var(--pri);background:var(--pri2)':''}" onclick="DF=DF==='${esc(t)}'?'':'${esc(t)}';render()">${esc(t)} ${xs.length?`<span class="tag ${w?'bad':'ok'}">${xs.length}</span>`:'<span class="tag mu">لا يوجد</span>'}</button>`}).join('')}</div>
+  <div class="tw" style="margin-top:10px"><table><thead><tr><th>ت</th><th>الوثيقة</th><th>الرقم</th><th>التفاصيل</th><th>الجهة المصدرة</th><th>الإصدار</th><th>الانتهاء</th><th>الحالة</th><th class="n">مبلغ التجديد</th><th></th></tr></thead>
+  <tbody>${l.map((x,i)=>{const e=x.emp&&emp(x.emp);return`<tr style="${x.closed?'opacity:.55':''}"><td>${i+1}</td><td><b>${esc(x.type)}</b>${e?`<div class="mute ltr">${esc(e.name)}</div>`:''}</td><td class="n">${esc(x.number)}</td><td style="white-space:normal;min-width:160px">${esc(x.details)}</td><td>${esc(x.issuer)}</td><td>${esc(x.issue)}</td><td>${docTag(x.expiry)}</td><td>${docStat(x)}</td><td class="n">${money(x.amount)}</td>
+   <td>${x.closed?'':`<button class="sm p" onclick="docRenew('${x.id}')">تجديد</button> `}<button class="sm" onclick="docForm('${x.id}')">تعديل</button> ${(x.history||[]).length?`<button class="sm" onclick="docHist('${x.id}')">السجل (${x.history.length})</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="10" class="empty">لا توجد وثائق — اضغط «+ وثيقة»</td></tr>'}</tbody></table></div>
+  <div class="mute" style="font-size:13px;margin-top:6px">مجموع ما صُرف على الوثائق (إصدار وتجديد): ${money(spent)} ر.ع — كل مبلغ تجديد يُسجَّل تلقائياً في «المصروفات».</div></div>`;
+}
+function docForm(id){
+  DB.docs=DB.docs||[];
+  const x=id?DB.docs.find(d=>d.id===id):{type:DF||'',issue:'',expiry:'',amount:0};
+  dlg(id?'تعديل وثيقة':'وثيقة جديدة',`<div class="fg">
+   <label>نوع الوثيقة<input name="type" list="dlDT" value="${esc(x.type)}"></label>
+   <label>رقم الوثيقة<input name="number" class="ltr" value="${esc(x.number)}"></label>
+   <label class="full">تفاصيل الوثيقة<textarea name="details" rows="2" placeholder="مثلاً: النشاط، العنوان، عدد العمال المسموح، المؤجر، رقم الوثيقة التأمينية…">${esc(x.details)}</textarea></label>
+   <label>الجهة المصدرة<input name="issuer" list="dlDI" value="${esc(x.issuer)}"></label>
+   <label>خاصة بعامل (اختياري)<select name="emp"><option value="">المؤسسة</option>${DB.emps.map(e=>`<option value="${e.id}" ${x.emp===e.id?'selected':''}>${esc(e.name)}</option>`).join('')}</select></label>
+   <label>تاريخ الإصدار<input name="issue" type="date" value="${esc(x.issue)}"></label>
+   <label>تاريخ الانتهاء<input name="expiry" type="date" value="${esc(x.expiry)}"></label>
+   <label>مبلغ التجديد<input name="amount" type="number" step="0.001" value="${x.amount||''}"></label>
+   <label>الحالة<select name="closed"><option value="0">سارية</option><option value="1" ${x.closed?'selected':''}>ملغاة / لم تعد مطلوبة</option></select></label>
+   ${id?'':`<label class="full"><span><input type="checkbox" name="asExp" style="width:auto"> دُفع مبلغ الوثيقة الآن — سجّله في المصروفات</span></label><label>من قام بالدفع<input name="payer" list="dlEP"></label>`}
+   <label class="full">ملاحظات<textarea name="notes" rows="2">${esc(x.notes)}</textarea></label></div>
+   ${dl('dlDT',[...CODOCS,...DB.docs.map(d=>d.type)])}${dl('dlDI',['وزارة التجارة والصناعة وترويج الاستثمار','وزارة العمل','البلدية','الدفاع المدني والإسعاف','وزارة الصحة','شركة التأمين',...DB.docs.map(d=>d.issuer)])}${dl('dlEP',DB.expenses.map(e=>e.payer))}`,
+  [['حفظ','p',()=>{
+    const o={type:fv('type'),number:fv('number'),details:fv('details'),issuer:fv('issuer'),emp:fv('emp'),issue:fv('issue'),expiry:fv('expiry'),amount:r3(fv('amount')),closed:fv('closed')==='1',notes:fv('notes')};
+    if(!o.type){toast('اختر نوع الوثيقة');return false}
+    if(id)Object.assign(x,o);else{const n={id:uid(),...o,history:[]};DB.docs.push(n);
+      if(fv('asExp')&&o.amount){const ex=docExpense(n,o.amount,fv('payer'),'إصدار');n.history.push({date:today(),old:'',nd:o.expiry,cost:o.amount,exp:ex,kind:'إصدار'})}}
+    save();render();toast('تم الحفظ');
+  }],['إلغاء'],...(id?[['حذف','d',()=>{if(!confirm('حذف الوثيقة؟ (المصروفات المسجلة تبقى)'))return false;DB.docs=DB.docs.filter(d=>d.id!==id);save();render()}]]:[])]);
+}
+function docExpense(x,amount,payer,kind){
+  const e=x.emp&&emp(x.emp),id=uid();
+  DB.expenses.push({id,type:(kind||'تجديد')+' '+x.type,amount:r3(amount),payer:payer||'',date:today(),recipient:x.issuer||'',notes:[x.number?'رقم '+x.number:'',e?e.name:''].filter(Boolean).join(' — '),doc:x.id});
+  return id;
+}
+function docRenew(id){
+  const x=DB.docs.find(d=>d.id===id),base=x.expiry&&x.expiry>today()?x.expiry:today();
+  dlg('تجديد '+x.type+(x.number?' — '+x.number:''),`<div class="fg">
+   <label>تاريخ الانتهاء الحالي<input disabled value="${esc(x.expiry||'—')}"></label>
+   <label>تاريخ الانتهاء الجديد<input name="nd" type="date" value="${addYears(base,1)}"></label>
+   <label>مبلغ التجديد<input name="cost" type="number" step="0.001" value="${x.amount||''}"></label>
+   <label>من قام بالدفع<input name="payer" list="dlEP"></label>
+   <label>تاريخ الدفع<input name="pd" type="date" value="${today()}"></label>
+   <label>رقم الوثيقة بعد التجديد<input name="number" class="ltr" value="${esc(x.number)}"></label>
+   <label class="full">ملاحظات / تفاصيل التجديد<input name="note"></label></div>
+   <div class="info">مبلغ التجديد يُسجَّل تلقائياً في «المصروفات» باسم «تجديد ${esc(x.type)}».</div>${dl('dlEP',DB.expenses.map(e=>e.payer))}`,
+  [['حفظ التجديد','p',()=>{
+    const nd=fv('nd'),cost=r3(fv('cost'));if(!nd){toast('اختر تاريخ الانتهاء الجديد');return false}
+    const old=x.expiry;x.expiry=nd;x.number=fv('number');if(cost)x.amount=cost;
+    let ex='';if(cost){ex=docExpense(x,cost,fv('payer'));const E=DB.expenses.find(e=>e.id===ex);E.date=fv('pd')||today();if(fv('note'))E.notes+=(E.notes?' — ':'')+fv('note')}
+    (x.history=x.history||[]).push({date:fv('pd')||today(),old,nd,cost,exp:ex,kind:'تجديد',note:fv('note')});
+    save();render();toast('تم التجديد'+(cost?' وسُجّل '+money(cost)+' في المصروفات':''));
+  }],['إلغاء']]);
+}
+function docHist(id){
+  const x=DB.docs.find(d=>d.id===id);
+  dlg('سجل '+x.type,`<div class="tw"><table><thead><tr><th>التاريخ</th><th>العملية</th><th>من</th><th>إلى</th><th class="n">المبلغ</th><th>ملاحظات</th></tr></thead><tbody>${(x.history||[]).slice().reverse().map(h=>`<tr><td>${esc(h.date)}</td><td>${esc(h.kind||'تجديد')}</td><td>${esc(h.old||'—')}</td><td>${esc(h.nd)}</td><td class="n">${money(h.cost)}</td><td>${esc(h.note)}</td></tr>`).join('')}</tbody></table></div>`,[['إغلاق','p']]);
+}
+function printCoDocs(){
+  const l=(DB.docs||[]).filter(x=>!x.closed).sort((a,b)=>(a.expiry||'9')>(b.expiry||'9')?1:-1);
+  printHTML('وثائق المؤسسة',`<table><thead><tr><th>ت</th><th>الوثيقة</th><th>الرقم</th><th>التفاصيل</th><th>الجهة المصدرة</th><th>الإصدار</th><th>الانتهاء</th><th>الحالة</th><th>مبلغ التجديد</th></tr></thead><tbody>${l.map((x,i)=>{const n=daysTo(x.expiry);return`<tr><td>${i+1}</td><td>${esc(x.type)}</td><td>${esc(x.number)}</td><td>${esc(x.details)}</td><td>${esc(x.issuer)}</td><td>${esc(x.issue)}</td><td>${esc(x.expiry)}</td><td>${n==null?'—':leftTxt(n)}</td><td>${money(x.amount)}</td></tr>`}).join('')}</tbody></table>`,true);
+}
+function renewForm(eid,k){
+  const e=emp(eid),t=DOCS.find(x=>x[0]===k)[1],old=(e.exp||{})[k]||'';
+  const base=old&&old>today()?old:today();
+  dlg(`تجديد ${t} — ${e.name}`,`<div class="fg">
+   <label>تاريخ الانتهاء الحالي<input disabled value="${esc(old||'—')}"></label>
+   <label>تاريخ الانتهاء الجديد<input name="nd" type="date" value="${addYears(base,k==='res'||k==='civil'?2:1)}"></label>
+   <label>تكلفة التجديد (اختياري)<input name="cost" type="number" step="0.001"></label>
+   <label>من قام بالدفع<input name="payer" list="dlEP"></label>
+   <label class="full"><span><input type="checkbox" name="asExp" checked style="width:auto"> تسجيل التكلفة في المصروفات</span></label></div>${dl('dlEP',DB.expenses.map(x=>x.payer))}`,
+  [['حفظ التجديد','p',()=>{
+    const nd=fv('nd');if(!nd){toast('اختر التاريخ الجديد');return false}
+    const cost=r3(fv('cost'));e.exp=e.exp||{};e.exp[k]=nd;
+    (e.renewals=e.renewals||[]).push({k,old,nd,date:today(),cost});
+    if(cost&&fv('asExp'))DB.expenses.push({id:uid(),type:'تجديد '+t,amount:cost,payer:fv('payer'),date:today(),recipient:'',notes:e.name});
+    save();render();toast('تم التجديد حتى '+nd);
+  }],['إلغاء']]);
+}
+function showAlerts(){
+  const l=allAlerts();if(!l.length)return toast('لا توجد وثائق قريبة الانتهاء');
+  dlg('تنبيه: وثائق منتهية أو تنتهي خلال '+alertDays()+' يوم',alertList(l),[['حسناً','p'],['طباعة','',()=>{printAlerts()}]]);
+}
+function printDocs(onlyAlerts){
+  const rows=DB.emps.filter(e=>e.active).map((e,i)=>{
+    const c=DOCS.map(([k])=>{const d=(e.exp||{})[k],n=daysTo(d);return d?`${d}${n!=null&&n<=alertDays()?`<br><b>${leftTxt(n)}</b>`:''}`:'—'});
+    if(onlyAlerts&&!DOCS.some(([k])=>{const n=daysTo((e.exp||{})[k]);return n!=null&&n<=alertDays()}))return'';
+    return`<tr><td style="direction:ltr;text-align:right">${esc(e.name)}</td><td>${esc(e.profession)}</td><td>${esc(e.nationality)}</td><td>${esc(e.idNo)}</td>${c.map(x=>`<td>${x}</td>`).join('')}</tr>`}).join('');
+  printHTML(onlyAlerts?'الوثائق المنتهية أو القريبة من الانتهاء':'تواريخ انتهاء وثائق العمال',`<table><thead><tr><th>اسم العامل</th><th>المهنة</th><th>الجنسية</th><th>رقم الهوية</th>${DOCS.map(d=>`<th>${d[1]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`,true);
+}
+
+/* ================= الواجهة ================= */
+const TABS=[['home','الرئيسية'],['emps','العمال'],['docs','الوثائق'],['pay','الرواتب'],['prof','الأرباح'],['exp','المصروفات'],['work','الأعمال'],['rep','التقارير'],['set','الإعدادات والنسخ']];
+let TAB='home',PM=null,FM=null,EM='',WF='',RY=null;
+function go(t){TAB=t;render();scrollTo(0,0)}
+function render(){
+  autoSync();
+  $('#coName').textContent=DB.settings.company||'بيلسان الريف المتحدة';
+  const na=expAlerts().length,nd=coAlerts().length;
+  $('#nav').innerHTML=TABS.map(([k,t])=>`<button class="${k===TAB?'on':''}" onclick="go('${k}')">${t}${k==='emps'&&na?` <span class="badge">${na}</span>`:''}${k==='docs'&&nd?` <span class="badge">${nd}</span>`:''}</button>`).join('');
+  $('#main').innerHTML=(FH&&!fhOk?`<div class="note">الحفظ التلقائي في ملف الجهاز متوقف حتى تسمح به مرة أخرى بعد فتح التطبيق. <button class="sm" onclick="relinkFile()">السماح بالحفظ في الملف</button></div>`:'')+({home:vHome,emps:vEmps,pay:vPay,prof:vProf,exp:vExp,work:vWork,rep:vRep,set:vSet,docs:vDocs})[TAB]();
+  if(TAB==='set'&&navigator.storage&&navigator.storage.persisted)navigator.storage.persisted().then(ok=>{const e=$('#pst');if(e)e.textContent=ok?'التخزين دائم على هذا الجهاز ✓':'التخزين غير مضمون الدوام — لا تمسح بيانات المتصفح، وخذ نسخة احتياطية.'});
+}
+function dlg(title,body,btns){
+  $('#dlgT').textContent=title;$('#dlgB').innerHTML=body;$('#dlgF').innerHTML='';
+  btns.forEach(([t,cls,fn])=>{const b=document.createElement('button');b.textContent=t;if(cls)b.className=cls;b.onclick=()=>{if(fn&&fn()===false)return;$('#dlg').close()};$('#dlgF').appendChild(b)});
+  $('#dlg').showModal();const f=$('#dlgB').querySelector('input,select');if(f)f.focus();
+}
+const fv=n=>{const e=$('#dlgB').querySelector(`[name="${n}"]`);return e?(e.type==='checkbox'?e.checked:e.value.trim()):''};
+const dl=(id,a)=>`<datalist id="${id}">${uniq(a).map(x=>`<option value="${esc(x)}">`).join('')}</datalist>`;
+
+/* ---------- الرئيسية ---------- */
+function vHome(){
+  if(!DB.emps.length&&!Object.keys(DB.payroll).length)return `<div class="card"><h2>مرحباً</h2><p>لا توجد بيانات بعد على هذا ${MOBILE?'الهاتف':'الجهاز'}.</p>
+   <ol><li>على الكمبيوتر: افتح التطبيق ← الإعدادات والنسخ ← <b>إرسال البيانات</b></li><li>أرسل الملف لنفسك (واتساب أو Google Drive)</li><li>هنا: اضغط <b>استلام البيانات</b> واختر الملف${MOBILE?' — أو من واتساب: مشاركة الملف ← «بيلسان الريف»':''}</li></ol>
+   <div class="row"><button class="p" onclick="pickFile('.json,application/json,text/plain,*/*',restore)">📥 استلام البيانات</button><button onclick="empForm()">أو ابدأ بإضافة عامل</button></div></div>`;
+  const m=curMonth(),pt=payTot(m),pf=profTot(m);
+  const ex=expIn(m).reduce((s,x)=>s+(+x.amount||0),0);
+  const wk=workIn(m),wr=wk.reduce((s,x)=>s+(+x.received||0),0);
+  const open=DB.works.filter(w=>w.status==='جديد'||w.status==='قيد التنفيذ').length;
+  const act=DB.emps.filter(e=>e.active).length;
+  const bk=DB.settings.lastBackup;const days=bk?Math.floor((Date.now()-bk)/864e5):null;
+  return `<div class="tiles">
+   <div class="tile"><div class="k">العمال النشطون</div><div class="v">${act}</div><div class="s">من أصل ${DB.emps.length}</div></div>
+   <div class="tile"><div class="k">رواتب ${mName(m)}</div><div class="v">${money(pt.net)}</div><div class="s">${DB.payroll[m]?pt.n+' عامل — المصروف '+money(pt.paid):'لم يُنشأ الكشف بعد'}</div></div>
+   <div class="tile"><div class="k">الأرباح المحصلة (${mName(m)})</div><div class="v">${money(pf.paid)}</div><div class="s">المتبقي ${money(pf.rest)}</div></div>
+   <div class="tile"><div class="k">مصروفات الشهر</div><div class="v">${money(ex)}</div><div class="s">${expIn(m).length} معاملة</div></div>
+   <div class="tile"><div class="k">الأعمال</div><div class="v">${open}</div><div class="s">قيد التنفيذ/جديدة — محصل الشهر ${money(wr)}</div></div>
+  </div>
+  ${(al=>al.length?`<div class="card" style="border-color:var(--bad)"><div class="row"><h2 style="margin:0">⚠ وثائق منتهية أو تنتهي خلال ${alertDays()} يوم (${al.length})</h2><span class="sp"></span><button class="sm" onclick="printAlerts()">🖨 طباعة</button></div>${alertList(al)}</div>`:'')(allAlerts())}
+  ${days===null||days>14?`<div class="note">${days===null?'لم تُؤخذ نسخة احتياطية بعد.':'آخر نسخة احتياطية قبل '+days+' يوم.'} <button class="sm" onclick="backup()">تنزيل نسخة احتياطية الآن</button></div>`:''}
+  <div class="card"><h2>إجراءات سريعة</h2><div class="row">
+   <button class="p" onclick="PM='${m}';if(!DB.payroll['${m}'])createPayroll('${m}');go('pay')">كشف رواتب ${mName(m)}</button>
+   <button onclick="${DB.payroll[m]?`bankExport('${m}')`:`toast('أنشئ كشف الشهر أولاً')`}">⬇ تنزيل ملف البنك</button>
+   <button onclick="empForm()">+ عامل جديد</button>
+   <button onclick="expForm()">+ مصروف</button>
+   <button onclick="workForm()">+ عمل جديد</button>
+  </div></div>`;
+}
+
+/* ---------- العمال ---------- */
+function vEmps(){
+  const al=expAlerts();
+  const rows=DB.emps.map((e,i)=>`<tr>
+   <td>${i+1}</td><td><b class="ltr">${esc(e.name)}</b>${e.nameAr?`<div class="mute">${esc(e.nameAr)}</div>`:''}</td><td>${esc(e.profession)}</td><td>${esc(e.nationality)}</td><td class="n">${esc(e.idNo)}</td>
+   ${DOCS.map(([k])=>`<td>${docTag((e.exp||{})[k])}</td>`).join('')}
+   <td>${esc(e.bank)}</td><td class="n">${esc(e.acct)}</td><td class="n">${money(e.basic)}</td><td class="n">${money(e.fee)}</td>
+   <td>${e.active?'<span class="tag ok">نشط</span>':'<span class="tag mu">موقوف</span>'}</td>
+   <td><button class="sm" onclick="empForm('${e.id}')">تعديل</button></td></tr>`).join('');
+  return `${al.length?`<div class="card" style="border-color:var(--bad)"><h2>⚠ تنبيهات انتهاء الوثائق (${al.length})</h2>${alertList(al)}</div>`:''}
+  <div class="card"><div class="row"><h2>العمال</h2><span class="sp"></span><button class="sm" onclick="printDocs()">🖨 تقرير الوثائق</button><button class="p" onclick="empForm()">+ عامل جديد</button></div>
+  <div class="info">الاسم ونوع الهوية والبنك ورقم الحساب تُكتب كما يقبلها البنك (بالإنجليزية) لأنها تنتقل كما هي إلى ملف البنك.
+  ألوان التواريخ: <span class="tag ok">سارية</span> <span class="tag warn">تنتهي خلال ${alertDays()} يوم</span> <span class="tag bad">منتهية</span></div>
+  ${DB.emps.length?`<div class="tw"><table><thead><tr><th>ت</th><th>اسم العامل</th><th>المهنة</th><th>الجنسية</th><th>رقم الهوية</th>${DOCS.map(d=>`<th>${d[1]}</th>`).join('')}<th>البنك</th><th>رقم الحساب</th><th class="n">الراتب الأساسي</th><th class="n">المبلغ الشهري</th><th>الحالة</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div class="empty">لا يوجد عمال</div>'}</div>`;
+}
+function empForm(id){
+  const e=id?emp(id):{idType:'Civil ID',bank:(DB.emps[0]||{}).bank||'',basic:0,ss:0,hourRate:0,fee:0,active:true};
+  dlg(id?'تعديل عامل':'عامل جديد',`<div class="fg">
+   <label class="full">اسم العامل (كما في البنك)<input name="name" class="ltr" value="${esc(e.name)}"></label>
+   <label class="full">الاسم بالعربي (اختياري)<input name="nameAr" value="${esc(e.nameAr)}"></label>
+   <label>المهنة<input name="profession" list="dlPR" value="${esc(e.profession)}"></label>
+   <label>الجنسية<input name="nationality" list="dlNA" value="${esc(e.nationality)}"></label>
+   ${DOCS.map(([k,t])=>`<label>انتهاء ${t}<input name="x_${k}" type="date" value="${esc((e.exp||{})[k])}"></label>`).join('')}
+   <label>نوع الهوية<input name="idType" list="dlIT" value="${esc(e.idType)}"></label>
+   <label>رقم الهوية<input name="idNo" class="ltr" inputmode="numeric" value="${esc(e.idNo)}"></label>
+   <label>البنك المستلم<input name="bank" list="dlBK" value="${esc(e.bank)}"></label>
+   <label>رقم الحساب<input name="acct" class="ltr" inputmode="numeric" value="${esc(e.acct)}"></label>
+   <label>الراتب الأساسي<input name="basic" type="number" step="0.001" value="${e.basic||0}"></label>
+   <label>خصم التأمينات الشهري<input name="ss" type="number" step="0.001" value="${e.ss||0}"></label>
+   <label>أجر الساعة الإضافية<input name="hourRate" type="number" step="0.001" value="${e.hourRate||0}"></label>
+   <label>المبلغ الشهري (الأرباح)<input name="fee" type="number" step="0.001" value="${e.fee||0}"></label>
+   <label>الهاتف<input name="phone" class="ltr" value="${esc(e.phone)}"></label>
+   <label>الحالة<select name="active"><option value="1">نشط</option><option value="0" ${e.active?'':'selected'}>موقوف</option></select></label>
+   <label class="full">ملاحظات<textarea name="notes" rows="2">${esc(e.notes)}</textarea></label>
+  </div>${dl('dlPR',['عامل','عامل زراعي','سائق','بنّاء','نجار','حداد','كهربائي','سباك','صباغ','فني','مزارع','حارس',...DB.emps.map(x=>x.profession)])}${dl('dlNA',['بنغلاديش','الهند','باكستان','نيبال','سريلانكا','الفلبين','مصر','اليمن','السودان',...DB.emps.map(x=>x.nationality)])}${dl('dlIT',['Civil ID','Passport',...DB.emps.map(x=>x.idType)])}${dl('dlBK',['sohar International','Bank Muscat','National Bank of Oman','Bank Dhofar','Oman Arab Bank','HSBC Oman','Ahli Bank','Bank Nizwa',...DB.emps.map(x=>x.bank)])}`,
+  [['حفظ','p',()=>{
+    const o={name:fv('name'),nameAr:fv('nameAr'),idType:fv('idType')||'Civil ID',idNo:fv('idNo'),bank:fv('bank'),acct:fv('acct'),basic:r3(fv('basic')),ss:r3(fv('ss')),hourRate:r3(fv('hourRate')),fee:r3(fv('fee')),phone:fv('phone'),active:fv('active')==='1',notes:fv('notes'),
+      profession:fv('profession'),nationality:fv('nationality'),exp:Object.fromEntries(DOCS.map(([k])=>[k,fv('x_'+k)]))};
+    if(!o.name){toast('اكتب اسم العامل');return false}
+    let e,old=null;
+    if(id){e=emp(id);old={...e};Object.assign(e,o)}else{e={id:uid(),...o};DB.emps.push(e)}
+    const msg=syncEmp(e,old);
+    save();render();toast('تم الحفظ'+(msg?' — '+msg:''));
+  }],['إلغاء'],...(id?[['حذف','d',()=>{if(!confirm('حذف العامل؟ يُزال من كشوف الشهر الحالي والقادمة غير المصروفة، والكشوف السابقة تبقى كما هي.'))return false;const e=emp(id);syncEmp({...e,active:false},e);DB.emps=DB.emps.filter(x=>x.id!==id);save();render()}]]:[])]);
+}
+/* ربط العامل بالنظام: أي إضافة/تعديل/إيقاف ينعكس على كشوف الرواتب والأرباح للشهر الحالي وما بعده (غير المصروفة فقط) — الأشهر السابقة لا تتغير */
+/* فحص تلقائي عند كل عرض: كل عامل نشط موجود في كشف رواتب وأرباح الشهر الحالي وما بعده (إلا من أزلته يدوياً من ذلك الشهر)،
+   وبيانات البنك في الصفوف غير المصروفة مطابقة لبيانات العامل الحالية */
+function autoSync(){
+  if(!DB)return;const cm=curMonth();let ch=false;DB.profRemoved=DB.profRemoved||{};
+  Object.keys(DB.payroll).filter(m=>m>=cm).forEach(m=>{const p=DB.payroll[m],rm=p.removed||[];
+    DB.emps.filter(e=>e.active&&!rm.includes(e.id)).forEach(e=>{const r=p.rows.find(x=>x.emp===e.id);
+      if(!r){p.rows.push({...snap(e),days:30,hours:0,basic:e.basic||0,extra:0,ded:0,ss:e.ss||0,paid:false});ch=true}
+      else if(!r.paid){const s=snap(e);if(Object.keys(s).some(k=>r[k]!==s[k])){Object.assign(r,s);ch=true}}})});
+  Object.keys(DB.profits).filter(m=>m>=cm).forEach(m=>{const l=DB.profits[m],rm=DB.profRemoved[m]||[];
+    DB.emps.filter(e=>e.active&&!rm.includes(e.id)).forEach(e=>{const r=l.find(x=>x.emp===e.id);
+      if(!r){l.push({id:uid(),emp:e.id,name:e.name,idNo:e.idNo,amount:e.fee||0,notes:'',paid:false,payDate:''});ch=true}
+      else if(!r.paid&&(r.name!==e.name||r.idNo!==e.idNo)){r.name=e.name;r.idNo=e.idNo;ch=true}})});
+  if(ch)save();
+}
+/* تصحيحات لمرة واحدة على بيانات الجهاز (تُعلَّم في DB.fixes حتى لا تتكرر) */
+function fixes(){
+  DB.fixes=DB.fixes||{};
+  /* 2026-10: بيانات العمال حسب «Salary Records» في موقع بنك صحار — عاملان جديدان، اسم البنك، و29 يوم عمل لكشف أكتوبر */
+  
+}
+function syncEmp(e,old){
+  const cm=curMonth(),done=[];
+  Object.keys(DB.payroll).filter(m=>m>=cm).forEach(m=>{
+    const rows=DB.payroll[m].rows,i=rows.findIndex(r=>r.emp===e.id),r=rows[i];
+    if(e.active&&!r){rows.push({...snap(e),days:30,hours:0,basic:e.basic||0,extra:0,ded:0,ss:e.ss||0,paid:false});done.push('أُضيف لكشف رواتب '+mName(m))}
+    else if(e.active&&r&&!r.paid){Object.assign(r,snap(e));if(old&&r3(r.basic)===r3(old.basic))r.basic=e.basic||0;if(old&&r3(r.ss)===r3(old.ss))r.ss=e.ss||0;if(old)done.push('حُدّث كشف '+mName(m))}
+    else if(!e.active&&r&&!r.paid){rows.splice(i,1);done.push('أُزيل من كشف '+mName(m))}
+  });
+  Object.keys(DB.profits).filter(m=>m>=cm).forEach(m=>{
+    const l=DB.profits[m],i=l.findIndex(r=>r.emp===e.id),r=l[i];
+    if(e.active&&!r)l.push({id:uid(),emp:e.id,name:e.name,idNo:e.idNo,amount:e.fee||0,notes:'',paid:false,payDate:''});
+    else if(e.active&&r&&!r.paid){r.name=e.name;r.idNo=e.idNo;if(old&&r3(r.amount)===r3(old.fee))r.amount=e.fee||0}
+    else if(!e.active&&r&&!r.paid)l.splice(i,1);
+  });
+  return uniq(done).join('، ');
+}
+
+/* ---------- الرواتب ---------- */
+function createPayroll(m){
+  const prev=Object.keys(DB.payroll).filter(k=>k<m).sort().pop();
+  const pr=prev?DB.payroll[prev].rows:[];
+  const rows=DB.emps.filter(e=>e.active).map(e=>{const p=pr.find(r=>r.emp===e.id);return{...snap(e),days:30,hours:0,basic:e.basic||0,extra:0,ded:0,ss:e.ss||(p?p.ss:0)||0,paid:false}});
+  DB.payroll[m]={rows,created:Date.now()};save();
+}
+function vPay(){
+  const ms=Object.keys(DB.payroll).sort().reverse();
+  if(!PM||!DB.payroll[PM])PM=ms[0]||null;
+  const top=`<div class="card"><div class="row"><h2 style="margin:0">كشف الرواتب</h2>
+   ${ms.length?`<select onchange="PM=this.value;render()">${ms.map(m=>`<option value="${m}" ${m===PM?'selected':''}>${mName(m)}</option>`).join('')}</select>`:''}
+   <span class="sp"></span><input type="month" id="newM" value="${curMonth()}"><button onclick="newPay()">+ إنشاء كشف شهر</button></div></div>`;
+  if(!PM)return top+'<div class="card empty">لا توجد كشوف رواتب — اختر الشهر واضغط «إنشاء كشف شهر»</div>';
+  const p=DB.payroll[PM],t=payTot(PM);
+  const inp=(i,k,v,c='')=>`<input class="${c}" type="number" step="${k==='days'||k==='hours'?'1':'0.001'}" value="${v}" onchange="payEdit(${i},'${k}',this.value)">`;
+  const rows=p.rows.map((r,i)=>`<tr>
+   <td>${i+1}</td><td class="ltr" style="text-align:right">${esc(r.name)}</td><td>${esc(r.idType)}</td><td class="n">${esc(r.idNo)}</td><td>${esc(r.bank)}</td><td class="n">${esc(r.acct)}</td>
+   <td>${inp(i,'days',r.days,'w')}</td><td>${inp(i,'hours',r.hours,'w')}</td><td>${inp(i,'basic',r.basic)}</td><td>${inp(i,'extra',r.extra)}</td><td>${inp(i,'ded',r.ded)}</td><td>${inp(i,'ss',r.ss)}</td>
+   <td class="n"><b>${money(net(r))}</b></td>
+   <td><label><input type="checkbox" style="width:auto" ${r.paid?'checked':''} onchange="payEdit(${i},'paid',this.checked)"> ${r.paid?'<span class="tag ok">صُرف</span>':'<span class="tag warn">لم يُصرف</span>'}</label></td>
+   <td><button class="sm d" onclick="payDel(${i})" title="إزالة من الكشف">✕</button></td></tr>`).join('');
+  return top+`<div class="card"><div class="row"><h2 style="margin:0">رواتب ${mName(PM)}</h2><span class="sp"></span>
+   <button onclick="bankPreview('${PM}')">👁 معاينة ملف البنك</button>
+   <button class="p" onclick="bankExport('${PM}')">⬇ تنزيل ملف البنك (${DB.settings.bankType==='xlsx'?'Excel':'CSV'})</button>
+   <button onclick="internalExport('${PM}')">⬇ الكشف الداخلي (Excel)</button>
+   <button onclick="printPay('${PM}')">🖨 طباعة</button></div>
+  <div class="row" style="margin-top:8px">
+   <button class="sm" onclick="payAdd()">+ إضافة عامل للكشف</button>
+   <button class="sm" onclick="payRefresh()">تحديث بيانات العمال (الاسم/الحساب)</button>
+   <button class="sm" onclick="payProrate()">حساب الراتب حسب أيام العمل</button>
+   <button class="sm" onclick="payAllPaid()">تعليم الكل: تم الصرف</button>
+   <span class="sp"></span><button class="sm d" onclick="payDelMonth()">حذف كشف الشهر</button></div>
+  <div class="tw" style="margin-top:10px"><table><thead><tr><th>ت</th><th>اسم العامل</th><th>نوع الهوية</th><th>رقم الهوية</th><th>البنك</th><th>رقم الحساب</th><th>أيام العمل</th><th>ساعات إضافية</th><th>الراتب الأساسي</th><th>دخل إضافي</th><th>الخصم</th><th>خصم التأمينات</th><th class="n">صافي الراتب</th><th>الصرف</th><th></th></tr></thead>
+  <tbody>${rows||'<tr><td colspan="15" class="empty">الكشف فارغ</td></tr>'}</tbody>
+  <tfoot><tr><td colspan="8">الإجمالي (${t.n} عامل)</td><td class="n">${money(t.basic)}</td><td class="n">${money(t.extra)}</td><td class="n">${money(t.ded)}</td><td class="n">${money(t.ss)}</td><td class="n">${money(t.net)}</td><td colspan="2">المصروف ${money(t.paid)}</td></tr></tfoot></table></div>
+  <div class="info">صافي الراتب = الراتب الأساسي + الدخل الإضافي − الخصم − خصم التأمينات. الخصومات تُكتب هنا بالموجب.<br>
+  ${DB.settings.bankType==='xlsx'?`ملف البنك Excel بنفس نموذج البنك. الخصومات فيه: <b>${DB.settings.dedMode==='neg'?'بالسالب مع إبقاء معادلة SUM':'بالموجب مع تصحيح المعادلة'}</b>.`:'ملف البنك <b>CSV</b> بنفس أعمدة نموذج البنك الـ13 وترتيبها — مطابق لما يحفظه Excel من النموذج بصيغة CSV. الخصومات بالموجب وصافي الراتب رقم محسوب.'} صيغة الملف تُغيّر من «الإعدادات».</div></div>`;
+}
+function newPay(){const m=$('#newM').value;if(!m)return;if(DB.payroll[m]){PM=m;render();return toast('الكشف موجود')}createPayroll(m);PM=m;render();toast('تم إنشاء كشف '+mName(m))}
+function payEdit(i,k,v){
+  const r=DB.payroll[PM].rows[i];
+  if(k==='paid')r.paid=v;else r[k]=k==='days'||k==='hours'?(+v||0):r3(v);
+  if(k==='hours'){const e=emp(r.emp);if(e&&e.hourRate)r.extra=r3(r.hours*e.hourRate)}
+  save();render();
+}
+function payDel(i){if(!confirm('إزالة العامل من كشف هذا الشهر؟'))return;const p=DB.payroll[PM],r=p.rows[i];if(r.emp)(p.removed=p.removed||[]).push(r.emp);p.rows.splice(i,1);save();render()}
+function payDelMonth(){if(!confirm('حذف كشف رواتب '+mName(PM)+' بالكامل؟'))return;delete DB.payroll[PM];PM=null;save();render()}
+function payAllPaid(){DB.payroll[PM].rows.forEach(r=>r.paid=true);save();render()}
+function payRefresh(){let n=0;DB.payroll[PM].rows.forEach(r=>{const e=emp(r.emp);if(e){Object.assign(r,snap(e));n++}});save();render();toast('تم تحديث '+n+' عامل')}
+function payProrate(){
+  if(!confirm('سيُحسب الراتب الأساسي لكل عامل = راتبه في بيانات العمال × أيام العمل ÷ 30. متابعة؟'))return;
+  DB.payroll[PM].rows.forEach(r=>{const e=emp(r.emp);if(e)r.basic=r3(e.basic*(+r.days||0)/30)});save();render();
+}
+function payAdd(){
+  const inn=new Set(DB.payroll[PM].rows.map(r=>r.emp));const l=DB.emps.filter(e=>!inn.has(e.id));
+  if(!l.length)return toast('كل العمال موجودون في الكشف');
+  dlg('إضافة عامل للكشف',`<div class="fg"><label class="full">العامل<select name="e">${l.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('')}</select></label></div>`,
+  [['إضافة','p',()=>{const e=emp(fv('e'));const p=DB.payroll[PM];p.removed=(p.removed||[]).filter(x=>x!==e.id);p.rows.push({...snap(e),days:30,hours:0,basic:e.basic||0,extra:0,ded:0,ss:e.ss||0,paid:false});save();render()}],['إلغاء']]);
+}
+function printPay(m){
+  const p=DB.payroll[m],t=payTot(m);
+  const rows=p.rows.map((r,i)=>`<tr><td>${i+1}</td><td style="direction:ltr;text-align:right">${esc(r.name)}</td><td>${esc(r.idNo)}</td><td>${esc(r.bank)}</td><td>${esc(r.acct)}</td><td>${r.days}</td><td>${r.hours}</td><td>${money(r.basic)}</td><td>${money(r.extra)}</td><td>${money(r.ded)}</td><td>${money(r.ss)}</td><td><b>${money(net(r))}</b></td><td></td></tr>`).join('');
+  printHTML(`كشف رواتب ${mName(m)}`,`<table><thead><tr><th>ت</th><th>اسم العامل</th><th>رقم الهوية</th><th>البنك</th><th>رقم الحساب</th><th>الأيام</th><th>ساعات إضافية</th><th>الأساسي</th><th>إضافي</th><th>الخصم</th><th>التأمينات</th><th>الصافي</th><th>التوقيع</th></tr></thead><tbody>${rows}</tbody>
+  <tfoot><tr><td colspan="7">الإجمالي</td><td>${money(t.basic)}</td><td>${money(t.extra)}</td><td>${money(t.ded)}</td><td>${money(t.ss)}</td><td>${money(t.net)}</td><td></td></tr></tfoot></table>
+  <div class="sig"><div>المحاسب: ..................</div><div>المدير: ..................</div></div>`,true);
+}
+
+/* ---------- الأرباح ---------- */
+function vProf(){
+  const ms=Object.keys(DB.profits).sort().reverse();
+  if(!FM||!DB.profits[FM])FM=ms[0]||null;
+  const top=`<div class="card"><div class="row"><h2 style="margin:0">الأرباح — المبلغ الشهري من العمال</h2>
+   ${ms.length?`<select onchange="FM=this.value;render()">${ms.map(m=>`<option value="${m}" ${m===FM?'selected':''}>${mName(m)}</option>`).join('')}</select>`:''}
+   <span class="sp"></span><input type="month" id="newF" value="${curMonth()}"><button onclick="newProf()">+ إنشاء كشف شهر</button></div>
+   <div class="info">المبلغ الشهري لكل عامل يُحدد من «العمال» ويُنسخ تلقائياً عند إنشاء كشف الشهر، ويمكن تعديله هنا.</div></div>`;
+  if(!FM)return top+'<div class="card empty">لا توجد كشوف أرباح بعد</div>';
+  const l=DB.profits[FM],t=profTot(FM);
+  const rows=l.map((r,i)=>`<tr><td>${i+1}</td><td class="ltr" style="text-align:right">${esc(r.name)}</td><td class="n">${esc(r.idNo)}</td>
+   <td><input type="number" step="0.001" value="${r.amount}" onchange="profEdit(${i},'amount',this.value)"></td>
+   <td><input style="width:200px" value="${esc(r.notes)}" onchange="profEdit(${i},'notes',this.value)"></td>
+   <td><select onchange="profEdit(${i},'paid',this.value==='1')"><option value="0">لا</option><option value="1" ${r.paid?'selected':''}>نعم</option></select> ${r.paid?`<span class="tag ok">مدفوع${r.payDate?' '+r.payDate:''}</span>`:'<span class="tag bad">غير مدفوع</span>'}</td>
+   <td><button class="sm d" onclick="profDel(${i})">✕</button></td></tr>`).join('');
+  return top+`<div class="card"><div class="row"><h2 style="margin:0">أرباح ${mName(FM)}</h2><span class="sp"></span>
+   <button class="sm" onclick="profAdd()">+ إضافة عامل</button><button class="sm" onclick="printProf('${FM}')">🖨 طباعة</button><button class="sm d" onclick="if(confirm('حذف كشف الشهر؟')){delete DB.profits[FM];FM=null;save();render()}">حذف كشف الشهر</button></div>
+  <div class="tw" style="margin-top:10px"><table><thead><tr><th>ت</th><th>اسم العامل</th><th>الرقم المدني</th><th>المبلغ الشهري</th><th>الملاحظات</th><th>دفع لا / نعم</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7" class="empty">فارغ</td></tr>'}</tbody>
+  <tfoot><tr><td colspan="3">الإجمالي</td><td class="n">${money(t.all)}</td><td colspan="3">المحصل ${money(t.paid)} — المتبقي ${money(t.rest)}</td></tr></tfoot></table></div></div>`;
+}
+function newProf(){
+  const m=$('#newF').value;if(!m)return;if(DB.profits[m]){FM=m;render();return toast('الكشف موجود')}
+  DB.profits[m]=DB.emps.filter(e=>e.active).map(e=>({id:uid(),emp:e.id,name:e.name,idNo:e.idNo,amount:e.fee||0,notes:'',paid:false,payDate:''}));
+  FM=m;save();render();toast('تم إنشاء كشف '+mName(m));
+}
+function profEdit(i,k,v){const r=DB.profits[FM][i];if(k==='amount')r.amount=r3(v);else if(k==='paid'){r.paid=v;r.payDate=v?today():''}else r[k]=v;save();render()}
+function profDel(i){if(!confirm('حذف الصف؟'))return;const r=DB.profits[FM][i];DB.profRemoved=DB.profRemoved||{};if(r.emp)(DB.profRemoved[FM]=DB.profRemoved[FM]||[]).push(r.emp);DB.profits[FM].splice(i,1);save();render()}
+function profAdd(){
+  const inn=new Set(DB.profits[FM].map(r=>r.emp));const l=DB.emps.filter(e=>!inn.has(e.id));
+  if(!l.length)return toast('كل العمال موجودون');
+  dlg('إضافة عامل',`<div class="fg"><label class="full">العامل<select name="e">${l.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('')}</select></label></div>`,
+  [['إضافة','p',()=>{const e=emp(fv('e'));DB.profRemoved=DB.profRemoved||{};DB.profRemoved[FM]=(DB.profRemoved[FM]||[]).filter(x=>x!==e.id);DB.profits[FM].push({id:uid(),emp:e.id,name:e.name,idNo:e.idNo,amount:e.fee||0,notes:'',paid:false,payDate:''});save();render()}],['إلغاء']]);
+}
+function printProf(m){
+  const l=DB.profits[m],t=profTot(m);
+  printHTML('الأرباح — '+mName(m),`<table><thead><tr><th>ت</th><th>اسم العامل</th><th>الرقم المدني</th><th>المبلغ الشهري</th><th>الملاحظات</th><th>دفع لا / نعم</th></tr></thead><tbody>${l.map((r,i)=>`<tr><td>${i+1}</td><td style="direction:ltr;text-align:right">${esc(r.name)}</td><td>${esc(r.idNo)}</td><td>${money(r.amount)}</td><td>${esc(r.notes)}</td><td>${r.paid?'نعم':'لا'}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="3">الإجمالي</td><td>${money(t.all)}</td><td colspan="2">المحصل ${money(t.paid)} — المتبقي ${money(t.rest)}</td></tr></tfoot></table>`);
+}
+
+/* ---------- المصروفات ---------- */
+function vExp(){
+  const ms=uniq(DB.expenses.map(x=>(x.date||'').slice(0,7))).sort().reverse();
+  const l=DB.expenses.filter(x=>!EM||(x.date||'').startsWith(EM)).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const tot=l.reduce((s,x)=>s+(+x.amount||0),0);
+  const byT={};l.forEach(x=>byT[x.type||'—']=(byT[x.type||'—']||0)+(+x.amount||0));
+  return `<div class="card"><div class="row"><h2 style="margin:0">المصروفات</h2>
+   <select onchange="EM=this.value;render()"><option value="">كل الأشهر</option>${ms.map(m=>`<option value="${m}" ${m===EM?'selected':''}>${mName(m)}</option>`).join('')}</select>
+   <span class="sp"></span><button class="sm" onclick="printExp()">🖨 طباعة</button><button class="p" onclick="expForm()">+ مصروف</button></div>
+  <div class="tw" style="margin-top:10px"><table><thead><tr><th>ت</th><th>نوع المعاملة</th><th class="n">المبلغ</th><th>من قام بالدفع</th><th>التاريخ</th><th>الجهة المستلمة</th><th>ملاحظات</th><th></th></tr></thead>
+  <tbody>${l.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.type)}</td><td class="n">${money(x.amount)}</td><td>${esc(x.payer)}</td><td>${esc(x.date)}</td><td>${esc(x.recipient)}</td><td>${esc(x.notes)}</td><td><button class="sm" onclick="expForm('${x.id}')">تعديل</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">لا توجد مصروفات</td></tr>'}</tbody>
+  <tfoot><tr><td colspan="2">الإجمالي</td><td class="n">${money(tot)}</td><td colspan="5"></td></tr></tfoot></table></div></div>
+  ${Object.keys(byT).length?`<div class="card"><h2>حسب نوع المعاملة</h2>${Object.entries(byT).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row" style="margin:4px 0"><span style="width:160px">${esc(k)}</span><div style="flex:1"><div class="bar e" style="width:${Math.max(2,v/tot*100)}%"></div></div><span class="ltr" style="width:110px;text-align:left">${money(v)}</span></div>`).join('')}</div>`:''}`;
+}
+function expForm(id){
+  const x=id?DB.expenses.find(e=>e.id===id):{date:today()};
+  dlg(id?'تعديل مصروف':'مصروف جديد',`<div class="fg">
+   <label>نوع المعاملة<input name="type" list="dlET" value="${esc(x.type)}"></label>
+   <label>المبلغ<input name="amount" type="number" step="0.001" value="${x.amount||''}"></label>
+   <label>من قام بالدفع<input name="payer" list="dlEP" value="${esc(x.payer)}"></label>
+   <label>التاريخ<input name="date" type="date" value="${esc(x.date)}"></label>
+   <label class="full">الجهة المستلمة<input name="recipient" list="dlER" value="${esc(x.recipient)}"></label>
+   <label class="full">ملاحظات<textarea name="notes" rows="2">${esc(x.notes)}</textarea></label></div>
+   ${dl('dlET',['رسوم حكومية','تجديد بطاقة عامل','تأشيرة','إيجار','كهرباء ومياه','مواد','نقل','صيانة',...DB.expenses.map(e=>e.type)])}${dl('dlEP',DB.expenses.map(e=>e.payer))}${dl('dlER',DB.expenses.map(e=>e.recipient))}`,
+  [['حفظ','p',()=>{const o={type:fv('type'),amount:r3(fv('amount')),payer:fv('payer'),date:fv('date')||today(),recipient:fv('recipient'),notes:fv('notes')};
+    if(!o.amount){toast('اكتب المبلغ');return false}
+    if(id)Object.assign(x,o);else DB.expenses.push({id:uid(),...o});save();render();toast('تم الحفظ')}],['إلغاء'],
+   ...(id?[['حذف','d',()=>{if(!confirm('حذف المصروف؟'))return false;DB.expenses=DB.expenses.filter(e=>e.id!==id);save();render()}]]:[])]);
+}
+function printExp(){
+  const l=DB.expenses.filter(x=>!EM||(x.date||'').startsWith(EM)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  printHTML('المصروفات'+(EM?' — '+mName(EM):''),`<table><thead><tr><th>ت</th><th>نوع المعاملة</th><th>المبلغ</th><th>من قام بالدفع</th><th>التاريخ</th><th>الجهة المستلمة</th></tr></thead><tbody>${l.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.type)}</td><td>${money(x.amount)}</td><td>${esc(x.payer)}</td><td>${esc(x.date)}</td><td>${esc(x.recipient)}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="2">الإجمالي</td><td>${money(l.reduce((s,x)=>s+(+x.amount||0),0))}</td><td colspan="3"></td></tr></tfoot></table>`);
+}
+
+/* ---------- الأعمال ---------- */
+const stTag=s=>`<span class="tag ${s==='مدفوع'?'ok':s==='منجز'?'warn':s==='ملغي'?'mu':'bad'}">${esc(s)}</span>`;
+function vWork(){
+  const l=DB.works.filter(w=>!WF||w.status===WF).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const tv=l.reduce((s,w)=>s+(w.status==='ملغي'?0:+w.value||0),0),tr=l.reduce((s,w)=>s+(+w.received||0),0);
+  return `<div class="card"><div class="row"><h2 style="margin:0">الأعمال</h2>
+   <select onchange="WF=this.value;render()"><option value="">كل الحالات</option>${WSTAT.map(s=>`<option ${s===WF?'selected':''}>${s}</option>`).join('')}</select>
+   <span class="sp"></span><button class="sm" onclick="printWork()">🖨 طباعة</button><button class="p" onclick="workForm()">+ عمل جديد</button></div>
+  <div class="tw" style="margin-top:10px"><table><thead><tr><th>ت</th><th>التاريخ</th><th>نوع العمل</th><th>الجهة / العميل</th><th class="n">القيمة</th><th class="n">المستلم</th><th class="n">المتبقي</th><th>الحالة</th><th></th></tr></thead>
+  <tbody>${l.map((w,i)=>`<tr><td>${i+1}</td><td>${esc(w.date)}</td><td>${esc(w.type)}</td><td>${esc(w.client)}</td><td class="n">${money(w.value)}</td><td class="n">${money(w.received)}</td><td class="n">${w.status==='ملغي'?'—':money((+w.value||0)-(+w.received||0))}</td><td>${stTag(w.status)}</td><td><button class="sm" onclick="workForm('${w.id}')">تعديل</button></td></tr>`).join('')||'<tr><td colspan="9" class="empty">لا توجد أعمال</td></tr>'}</tbody>
+  <tfoot><tr><td colspan="4">الإجمالي</td><td class="n">${money(tv)}</td><td class="n">${money(tr)}</td><td class="n">${money(tv-tr)}</td><td colspan="2"></td></tr></tfoot></table></div></div>`;
+}
+function workForm(id){
+  const w=id?DB.works.find(e=>e.id===id):{date:today(),status:'جديد',received:0};
+  dlg(id?'تعديل عمل':'عمل جديد',`<div class="fg">
+   <label>التاريخ<input name="date" type="date" value="${esc(w.date)}"></label>
+   <label>نوع العمل<input name="type" list="dlWT" value="${esc(w.type)}"></label>
+   <label class="full">الجهة / العميل<input name="client" list="dlWC" value="${esc(w.client)}"></label>
+   <label>القيمة<input name="value" type="number" step="0.001" value="${w.value||''}"></label>
+   <label>المبلغ المستلم<input name="received" type="number" step="0.001" value="${w.received||0}"></label>
+   <label>الحالة<select name="status">${WSTAT.map(s=>`<option ${s===w.status?'selected':''}>${s}</option>`).join('')}</select></label>
+   <label class="full">ملاحظات<textarea name="notes" rows="2">${esc(w.notes)}</textarea></label></div>
+   <div class="mute" style="font-size:12px;margin-top:6px">عند اختيار «مدفوع» يُكمَّل المبلغ المستلم تلقائياً إلى القيمة.</div>
+   ${dl('dlWT',DB.works.map(e=>e.type))}${dl('dlWC',DB.works.map(e=>e.client))}`,
+  [['حفظ','p',()=>{const o={date:fv('date')||today(),type:fv('type'),client:fv('client'),value:r3(fv('value')),received:r3(fv('received')),status:fv('status'),notes:fv('notes')};
+    if(!o.type){toast('اكتب نوع العمل');return false}
+    if(o.status==='مدفوع'&&o.received<o.value)o.received=o.value;
+    if(id)Object.assign(w,o);else DB.works.push({id:uid(),...o});save();render();toast('تم الحفظ')}],['إلغاء'],
+   ...(id?[['حذف','d',()=>{if(!confirm('حذف العمل؟'))return false;DB.works=DB.works.filter(e=>e.id!==id);save();render()}]]:[])]);
+}
+function printWork(){
+  const l=DB.works.filter(w=>!WF||w.status===WF).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  printHTML('الأعمال'+(WF?' — '+WF:''),`<table><thead><tr><th>ت</th><th>التاريخ</th><th>نوع العمل</th><th>الجهة</th><th>القيمة</th><th>المستلم</th><th>الحالة</th></tr></thead><tbody>${l.map((w,i)=>`<tr><td>${i+1}</td><td>${esc(w.date)}</td><td>${esc(w.type)}</td><td>${esc(w.client)}</td><td>${money(w.value)}</td><td>${money(w.received)}</td><td>${esc(w.status)}</td></tr>`).join('')}</tbody></table>`);
+}
+
+/* ---------- التقارير ---------- */
+function monthSummary(m){
+  const work=workIn(m).reduce((s,w)=>s+(+w.received||0),0),prof=profTot(m).paid;
+  const sal=payTot(m).net,ex=expIn(m).reduce((s,x)=>s+(+x.amount||0),0);
+  return{work,prof,inc:work+prof,sal,ex,out:sal+ex,net:work+prof-sal-ex};
+}
+function years(){const s=new Set([curMonth().slice(0,4)]);[...Object.keys(DB.payroll),...Object.keys(DB.profits),...DB.expenses.map(x=>x.date),...DB.works.map(x=>x.date)].forEach(d=>d&&s.add(d.slice(0,4)));return[...s].sort().reverse()}
+function vRep(){
+  const ys=years();if(!RY||!ys.includes(RY))RY=ys[0];
+  const rs=MONTHS.map((n,i)=>({m:RY+'-'+pad(i+1),n,...monthSummary(RY+'-'+pad(i+1))}));
+  const T=rs.reduce((a,r)=>{['work','prof','inc','sal','ex','out','net'].forEach(k=>a[k]=(a[k]||0)+r[k]);return a},{});
+  const mx=Math.max(1,...rs.map(r=>Math.max(r.inc,r.out)));
+  return `<div class="card"><div class="row"><h2 style="margin:0">التقرير السنوي</h2><select onchange="RY=this.value;render()">${ys.map(y=>`<option ${y===RY?'selected':''}>${y}</option>`).join('')}</select><span class="sp"></span><button class="sm" onclick="printRep()">🖨 طباعة</button><button class="sm" onclick="internalExport()">⬇ تصدير كل البيانات (Excel)</button></div>
+  <div class="tiles" style="margin-top:12px">
+   <div class="tile"><div class="k">إجمالي الدخل</div><div class="v">${money(T.inc)}</div><div class="s">أعمال ${money(T.work)} + أرباح ${money(T.prof)}</div></div>
+   <div class="tile"><div class="k">إجمالي المصروف</div><div class="v">${money(T.out)}</div><div class="s">رواتب ${money(T.sal)} + مصروفات ${money(T.ex)}</div></div>
+   <div class="tile"><div class="k">الصافي</div><div class="v" style="color:${T.net<0?'var(--bad)':'var(--ok)'}">${money(T.net)}</div><div class="s">ر.ع</div></div></div>
+  <div class="tw"><table><thead><tr><th>الشهر</th><th class="n">الأعمال المحصلة</th><th class="n">الأرباح المحصلة</th><th class="n">الرواتب</th><th class="n">المصروفات</th><th class="n">الصافي</th><th style="width:30%">دخل / مصروف</th></tr></thead>
+  <tbody>${rs.map(r=>`<tr><td>${r.n}</td><td class="n">${money(r.work)}</td><td class="n">${money(r.prof)}</td><td class="n">${money(r.sal)}</td><td class="n">${money(r.ex)}</td><td class="n" style="color:${r.net<0?'var(--bad)':'inherit'}">${money(r.net)}</td>
+   <td><div class="bar" style="width:${r.inc/mx*100}%;margin-bottom:2px"></div><div class="bar e" style="width:${r.out/mx*100}%"></div></td></tr>`).join('')}</tbody>
+  <tfoot><tr><td>الإجمالي</td><td class="n">${money(T.work)}</td><td class="n">${money(T.prof)}</td><td class="n">${money(T.sal)}</td><td class="n">${money(T.ex)}</td><td class="n">${money(T.net)}</td><td></td></tr></tfoot></table></div>
+  <div class="mute" style="font-size:12px;margin-top:6px">الدخل = المستلم من الأعمال + الأرباح المدفوعة. الرواتب = صافي كشف الشهر.</div></div>`;
+}
+function printRep(){
+  const rs=MONTHS.map((n,i)=>({n,...monthSummary(RY+'-'+pad(i+1))}));
+  printHTML('التقرير السنوي '+RY,`<table><thead><tr><th>الشهر</th><th>الأعمال المحصلة</th><th>الأرباح المحصلة</th><th>الرواتب</th><th>المصروفات</th><th>الصافي</th></tr></thead><tbody>${rs.map(r=>`<tr><td>${r.n}</td><td>${money(r.work)}</td><td>${money(r.prof)}</td><td>${money(r.sal)}</td><td>${money(r.ex)}</td><td>${money(r.net)}</td></tr>`).join('')}</tbody></table>`);
+}
+
+/* ---------- الإعدادات ---------- */
+function vSet(){
+  const s=DB.settings;
+  return `<div class="card"><h2>بيانات المؤسسة</h2><div class="fg">
+   <label class="full">اسم المؤسسة<input value="${esc(s.company)}" onchange="DB.settings.company=this.value;save();render()"></label>
+   <label>التنبيه قبل انتهاء الوثائق بـ (يوم)<input type="number" min="1" value="${alertDays()}" onchange="DB.settings.alertDays=Math.max(1,+this.value||30);save();render()"></label></div></div>
+  <div class="card"><h2>ملف البنك</h2>
+   <h3 style="font-size:15px;margin:4px 0">صيغة ملف البنك</h3>
+   <label style="display:block;margin:6px 0"><input type="radio" name="bt" ${s.bankType!=='xlsx'?'checked':''} onchange="DB.settings.bankType='csv';save();render()"> <b>CSV</b> — الصيغة التي يقبلها تطبيق البنك (موصى به)</label>
+   <label style="display:block;margin:6px 0"><input type="radio" name="bt" ${s.bankType==='xlsx'?'checked':''} onchange="DB.settings.bankType='xlsx';save();render()"> Excel (xlsx)</label>
+   <div class="mute" style="font-size:13px;margin-bottom:10px">ملف CSV: نفس الأعمدة الـ13 بالإنجليزية وبنفس الترتيب، بدون معادلات، رقم الحساب 12 خانة، الراتب بثلاث خانات عشرية، والخصومات بالموجب — مطابق حرفياً لما يحفظه Excel من نموذج البنك بصيغة «CSV (محدد بفواصل)».</div>
+   <h3 style="font-size:15px;margin:4px 0">إعدادات ملف Excel</h3>
+   <div class="info">ملف البنك يُبنى من ملف Excel الأصلي نفسه «بيلسان الريف المتحدة.xlsx» — نفس الأوراق والأعمدة والتنسيق — ولا يتغير فيه إلا صفوف العمال في «جدول الرواتب». ويفتح على ورقة «جدول الرواتب».</div>
+   <label style="display:block;margin:6px 0"><input type="radio" name="bf" ${s.bankFormat!=='single'?'checked':''} onchange="DB.settings.bankFormat='copy';save()"> <b>نسخة طبق الأصل</b> من الملف الأصلي (الأوراق الأربع كما هي) — موصى به</label>
+   <label style="display:block;margin:6px 0"><input type="radio" name="bf" ${s.bankFormat==='single'?'checked':''} onchange="DB.settings.bankFormat='single';save()"> ورقة «جدول الرواتب» فقط (إن طلب البنك ملفاً بورقة واحدة)</label>
+   <div class="fg" style="margin:8px 0"><label>اسم ملف البنك (بالإنجليزية بدون مسافات)<input class="ltr" value="${esc(s.bankFile||'Salary-{month}')}" onchange="DB.settings.bankFile=this.value;save()"></label>
+   <label>مثال<input class="ltr" disabled value="${esc(bankFileName(curMonth()))}"></label></div>
+   <div class="mute" style="font-size:13px">{month} تُستبدل بالشهر. الاسم الإنجليزي أضمن لمواقع البنوك التي ترفض الأسماء العربية.</div>
+   <h3 style="font-size:15px;margin:14px 0 4px">الخصومات</h3>
+   <label style="display:block;margin:6px 0"><input type="radio" name="dm" ${s.dedMode==='neg'?'checked':''} onchange="DB.settings.dedMode='neg';save()"> الخصومات تُكتب <b>بالسالب</b> وتبقى معادلة البنك <bdi dir="ltr">=SUM(I:L)</bdi> كما هي (النموذج الأصلي دون أي تغيير)</label>
+   <label style="display:block;margin:6px 0"><input type="radio" name="dm" ${s.dedMode==='pos'?'checked':''} onchange="DB.settings.dedMode='pos';save()"> الخصومات تُكتب <b>بالموجب</b> وتصبح المعادلة <bdi dir="ltr">=I+J-K-L</bdi></label>
+   <div class="mute" style="font-size:13px">في الحالتين يخرج صافي الراتب صحيحاً. إذا لم يوجد خصم فلا فرق بينهما. اسأل البنك أيهما يقبل إن احتجت للخصم.</div>
+   <div class="row" style="margin-top:10px"><button onclick="pickFile('.xlsx,.csv',importBank)">⬆ استيراد ملف رواتب بنكي (xlsx أو CSV)</button></div></div>
+  <div class="card"><h2>مكان التخزين</h2>
+   <div class="info">البيانات محفوظة في <b>ذاكرة ${MOBILE?'الهاتف':'هذا الجهاز'}</b> (داخل المتصفح) ولا تُرسل لأي مكان ولا تحتاج إنترنت.</div>
+   ${MOBILE||!window.showSaveFilePicker?'':FH?`<div>📁 الحفظ التلقائي في ملف على الجهاز: <b>${esc(FH.name)}</b> — ${fhOk?'<span class="tag ok">يعمل</span>':'<span class="tag warn">بحاجة إلى إذن</span>'}</div>
+     <div class="row" style="margin-top:8px">${fhOk?'':'<button class="p" onclick="relinkFile()">السماح بالحفظ</button>'}<button onclick="pickSaveFile()">تغيير الملف</button><button class="d" onclick="stopFile()">إيقاف الحفظ في الملف</button></div>`
+    :`<div class="row"><button class="p" onclick="pickSaveFile()">📁 حفظ تلقائي في ملف على الجهاز</button></div><div class="mute" style="font-size:13px;margin-top:6px">اختر مكاناً (مثلاً مجلد «بيلسان الريف المتحدة» على سطح المكتب أو فلاشة) وسيُحدَّث الملف تلقائياً مع كل تعديل. لاسترجاعه استخدم «استرجاع نسخة احتياطية».</div>`}<div class="mute" id="pst" style="font-size:13px;margin-top:6px"></div></div>
+  <div class="card"><h2>نقل البيانات والنسخ الاحتياطي</h2>
+   <div class="row"><button class="p" onclick="backup()">📤 إرسال البيانات / حفظ نسخة</button><button onclick="pickFile('.json,application/json,text/plain,*/*',restore)">📥 استلام البيانات / استرجاع نسخة</button><button onclick="internalExport()">⬇ تصدير كل البيانات (Excel)</button></div>
+   <div class="mute" style="font-size:13px;margin-top:8px">للنقل بين الكمبيوتر والجوال: «إرسال البيانات» على الجهاز الذي عدّلت فيه ← أرسل الملف لنفسك (واتساب أو Google Drive) ← «استلام البيانات» على الجهاز الآخر. الاستلام يستبدل بيانات الجهاز بالملف، فعدّل على جهاز واحد في كل مرة.</div>
+   <div class="mute" style="font-size:13px;margin-top:8px">آخر نسخة: ${s.lastBackup?new Date(s.lastBackup).toLocaleString('ar-OM'):'لا يوجد'} — آخر تعديل: ${DB.updated?new Date(DB.updated).toLocaleString('ar-OM'):'—'}</div></div>
+  <div class="card"><h2>بيانات خطيرة</h2><button class="d" onclick="if(confirm('مسح كل البيانات من هذا الجهاز؟ خذ نسخة احتياطية أولاً!')&&confirm('تأكيد نهائي؟')){DB=blank();save();render()}">مسح كل البيانات</button></div>`;
+}
+function pickFile(acc,fn){const f=$('#fileIn');f.accept=acc;f.value='';f.onchange=()=>f.files[0]&&fn(f.files[0]);f.click()}
+async function download(blob,name){blob=await blob;const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+async function backup(){
+  DB.settings.lastBackup=Date.now();save();
+  const name=`بيانات بيلسان ${today()}.json`,data=JSON.stringify(DB,null,1);
+  try{const f=new File([data],name,{type:'application/json'});
+    if(MOBILE&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'بيانات بيلسان الريف المتحدة'});render();return}}catch(e){if(e&&e.name==='AbortError'){render();return}}
+  download(new Blob([data],{type:'application/json'}),name);render();toast('تم حفظ الملف');
+}
+async function restore(f){applyData(await f.text())}
+function applyData(text){
+  try{const d=JSON.parse(text);if(!d||!d.emps||!d.payroll)throw 0;
+    const fd=x=>x?new Date(x).toLocaleString('ar-OM'):'—',empty=!DB.emps.length&&!Object.keys(DB.payroll).length;
+    let msg=`استبدال بيانات هذا الجهاز ببيانات الملف؟\n\nتاريخ الملف: ${fd(d.updated)}\nبيانات هذا الجهاز: ${fd(DB.updated)}`;
+    if(!empty&&DB.updated&&d.updated&&d.updated<DB.updated)msg='⚠ هذا الملف أقدم من البيانات الموجودة على هذا الجهاز!\n\n'+msg;
+    if(!empty&&!confirm(msg))return;
+    DB=d;TAB='home';DB.settings=Object.assign(blank().settings,DB.settings||{});DB.docs=DB.docs||[];save();render();toast('تم استلام البيانات')}catch(e){alert('الملف غير صالح')}
+}
+
+/* ================= الطباعة ================= */
+function printHTML(title,body,land){
+  const d=$('#pf').contentDocument;
+  d.open();d.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
+  @page{size:A4 ${land?'landscape':'portrait'};margin:12mm}body{font:12px Tahoma,Arial;color:#000}h1{font-size:18px;margin:0}h2{font-size:15px;margin:4px 0 12px;font-weight:normal}
+  table{border-collapse:collapse;width:100%}th,td{border:1px solid #555;padding:4px 5px;text-align:center}th{background:#e6efe9}tfoot td{font-weight:bold;background:#f2f2f2}
+  .sig{display:flex;justify-content:space-around;margin-top:40px;font-size:13px}.ft{margin-top:20px;font-size:10px;color:#666}</style></head>
+  <body><h1>${esc(DB.settings.company)}</h1><h2>${esc(title)}</h2>${body}<div class="ft">طُبع في ${today()}</div></body></html>`);
+  d.close();setTimeout(()=>$('#pf').contentWindow.print(),250);
+}
+
+/* ================= كتابة ملفات xlsx (ZIP بدون ضغط) ================= */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
+async function deflate(data){
+  try{if(typeof CompressionStream==='undefined')return null;
+    return new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer())}catch(e){return null}
+}
+/* ZIP مضغوط (deflate) مثل ملفات Excel نفسها؛ وإن لم يدعمه المتصفح يُخزَّن بدون ضغط */
+async function zip(files){
+  const enc=new TextEncoder(),parts=[],cd=[];let off=0;
+  const d=new Date(),dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate(),tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+  for(let [name,data] of files){
+    if(typeof data==='string')data=enc.encode(data);
+    const nm=enc.encode(name),crc=crc32(data),ascii=/^[\x20-\x7e]*$/.test(name);
+    const z=await deflate(data),meth=z?8:0,body=z||data;
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,ascii?0:0x0800,true);h.setUint16(8,meth,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);
+    h.setUint32(14,crc,true);h.setUint32(18,body.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nm.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),nm,body);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,ascii?0:0x0800,true);c.setUint16(10,meth,true);c.setUint16(12,tm,true);c.setUint16(14,dt,true);
+    c.setUint32(16,crc,true);c.setUint32(20,body.length,true);c.setUint32(24,data.length,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+    cd.push(new Uint8Array(c.buffer),nm);
+    off+=30+nm.length+body.length;
+  }
+  const cdSize=cd.reduce((s,a)=>s+a.length,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cdSize,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,new Uint8Array(e.buffer)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+const xe=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,'');
+const colL=i=>{let s='';i++;while(i){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=(i-m-1)/26}return s};
+const numS=x=>String(r3(x)===0?0:r3(x));
+/* cell: null | {s:'نص'} | {n:رقم} | {f:'معادلة',n:قيمة}  + st = رقم التنسيق */
+function sheetXml(sh,sst,opt){
+  const ns=opt.bank?'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac xr xr2 xr3" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision" xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2" xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3" xr:uid="{00000000-0001-0000-0000-000000000000}"'
+    :'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  const nc=Math.max(1,...sh.rows.map(r=>r.cells.length));
+  const dy=opt.bank?' x14ac:dyDescent="0.2"':'';
+  const rows=sh.rows.map((r,ri)=>{
+    const R=ri+1;
+    const cs=r.cells.map((c,ci)=>{
+      if(c==null)return'';const ref=colL(ci)+R,st=c.st?` s="${c.st}"`:'';
+      if(c.f!=null)return`<c r="${ref}"${st}><f>${xe(c.f)}</f><v>${numS(c.n)}</v></c>`;
+      if(c.n!=null)return`<c r="${ref}"${st}><v>${c.raw?c.n:numS(c.n)}</v></c>`;
+      return`<c r="${ref}"${st} t="s"><v>${sst.add(c.s)}</v></c>`;
+    }).join('');
+    return`<row r="${R}" spans="1:${nc}"${r.ht?` ht="${r.ht}"`:''}${dy}>${cs}</row>`;
+  }).join('');
+  const last=colL(nc-1)+Math.max(1,sh.rows.length);
+  const cols=sh.cols&&sh.cols.length?`<cols>${sh.cols.map(c=>`<col min="${c[0]}" max="${c[1]}" width="${c[2]}" customWidth="1"/>`).join('')}</cols>`:'';
+  return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet ${ns}><dimension ref="A1:${last}"/><sheetViews><sheetView rightToLeft="1"${sh.first?' tabSelected="1"':''} workbookViewId="0">${sh.freeze?'<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>':''}</sheetView></sheetViews><sheetFormatPr defaultRowHeight="14.25"${dy}/>${cols}<sheetData>${rows}</sheetData><pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>${opt.bank?'<pageSetup orientation="portrait" horizontalDpi="4294967295" verticalDpi="4294967295" r:id="rId1"/>':'<pageSetup paperSize="9" orientation="landscape"/>'}</worksheet>`;
+}
+function makeSST(init,extra){const l=[],m=new Map();let count=extra||0;(init||[]).forEach(s=>{m.set(s,l.length);l.push(s)});return{add(s){s=String(s??'');count++;if(!m.has(s)){m.set(s,l.length);l.push(s)}return m.get(s)},xml(){return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${count}" uniqueCount="${l.length}">${l.map(s=>`<si><t${/^\s|\s$/.test(s)?' xml:space="preserve"':''}>${xe(s)}</t></si>`).join('')}</sst>`}}}
+function buildXlsx(sheets,opt){
+  const sst=makeSST(),X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  sheets[0].first=true;
+  const sx=sheets.map(s=>sheetXml(s,sst,opt));
+  const now=new Date().toISOString().replace(/\.\d+Z$/,'Z');
+  const files=[];
+  files.push(['[Content_Types].xml',X+`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">${opt.bank?'<Default Extension="bin" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.printerSettings"/>':''}<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}${opt.theme?'<Override PartName="/xl/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>':''}<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>`]);
+  files.push(['_rels/.rels',X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>']);
+  const n=sheets.length;
+  files.push(['xl/workbook.xml',X+`<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><workbookPr/><bookViews><workbookView xWindow="-120" yWindow="-120" windowWidth="29040" windowHeight="15840" activeTab="0"/></bookViews><sheets>${sheets.map((s,i)=>`<sheet name="${xe(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>`]);
+  files.push(['xl/_rels/workbook.xml.rels',X+`<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${n+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId${n+2}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>${opt.theme?`<Relationship Id="rId${n+3}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>`:''}</Relationships>`]);
+  sx.forEach((x,i)=>files.push([`xl/worksheets/sheet${i+1}.xml`,x]));
+  if(opt.bank){
+    files.push(['xl/worksheets/_rels/sheet1.xml.rels',X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/printerSettings" Target="../printerSettings/printerSettings1.bin"/></Relationships>']);
+    files.push(['xl/printerSettings/printerSettings1.bin',Uint8Array.from(atob(BANK_TPL.printer),c=>c.charCodeAt(0))]);
+  }
+  if(opt.theme)files.push(['xl/theme/theme1.xml',opt.theme]);
+  files.push(['xl/styles.xml',opt.styles]);
+  files.push(['xl/sharedStrings.xml',sst.xml()]);
+  files.push(['docProps/core.xml',X+`<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:creator>محمد المقبالي</dc:creator><cp:lastModifiedBy>${xe(DB.settings.company)}</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`]);
+  files.push(['docProps/app.xml',X+`<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>Microsoft Excel</Application><DocSecurity>0</DocSecurity><ScaleCrop>false</ScaleCrop><HeadingPairs><vt:vector size="2" baseType="variant"><vt:variant><vt:lpstr>أوراق العمل</vt:lpstr></vt:variant><vt:variant><vt:i4>${n}</vt:i4></vt:variant></vt:vector></HeadingPairs><TitlesOfParts><vt:vector size="${n}" baseType="lpstr">${sheets.map(s=>`<vt:lpstr>${xe(s.name)}</vt:lpstr>`).join('')}</vt:vector></TitlesOfParts><Company></Company><LinksUpToDate>false</LinksUpToDate><SharedDoc>false</SharedDoc><HyperlinksChanged>false</HyperlinksChanged><AppVersion>16.0300</AppVersion></Properties>`]);
+  return zip(files);
+}
+/* رقم طويل (هوية/حساب): يُكتب رقماً كما في النموذج الأصلي إذا كان أرقاماً فقط، وإلا نصاً */
+const idCell=(v,st)=>/^\d{1,15}$/.test(String(v||'').trim())?{n:String(+String(v).trim()),raw:1,st}:{s:String(v||''),st};
+
+/* ---------- ملف البنك: نفس نموذج «جدول الرواتب» تماماً ---------- */
+/* فحص الكشف قبل التنزيل — الأخطاء التي تجعل موقع البنك يرفض الملف */
+function bankCheck(p){
+  const errs=[];
+  p.rows.forEach((r,i)=>{
+    const w=`${i+1}. ${r.name||'(بدون اسم)'}: `;
+    if(!r.name)errs.push(w+'الاسم فارغ');
+    else if(/[^\x20-\x7e]/.test(r.name))errs.push(w+'الاسم فيه حروف غير إنجليزية — البنك يقبل الاسم بالإنجليزية');
+    if(!String(r.idNo||'').trim())errs.push(w+'رقم الهوية فارغ');
+    else if(/civil/i.test(r.idType)&&!/^\d+$/.test(String(r.idNo).trim()))errs.push(w+'رقم الهوية المدنية يجب أن يكون أرقاماً فقط');
+    if(!String(r.bank||'').trim())errs.push(w+'اسم البنك المستلم فارغ');
+    if(!/^\d+$/.test(String(r.acct||'').trim()))errs.push(w+'رقم الحساب فارغ أو فيه رموز/مسافات');
+    else if(String(r.acct).trim().length>15)errs.push(w+'رقم الحساب أطول من 15 رقماً — راجعه');
+    if(!(+r.basic>0))errs.push(w+'الراتب الأساسي صفر');
+    if(!(net(r)>0))errs.push(w+'صافي الراتب صفر أو سالب');
+  });
+  const ids=p.rows.map(r=>String(r.acct||'').trim()).filter(Boolean);
+  ids.forEach((a,i)=>{if(ids.indexOf(a)!==i)errs.push(`رقم الحساب ${a} مكرر في الكشف`)});
+  return errs;
+}
+function bankExport(m,force){
+  const p=DB.payroll[m];if(!p||!p.rows.length)return toast('الكشف فارغ');
+  if(!force){
+    const errs=bankCheck(p);
+    const hasDed=p.rows.some(r=>+r.ded||+r.ss);
+    if(errs.length)return dlg('تنبيه قبل تنزيل ملف البنك',`<div class="note">قد يرفض البنك الملف بسبب ما يلي — صحّحه من «العمال» ثم «تحديث بيانات العمال» في الكشف:</div><ul>${errs.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`,
+      [['إلغاء','p'],['تنزيل على أي حال','',()=>{bankExport(m,true)}]]);
+    if(hasDed&&!DB.settings.dedOk)return dlg('الخصومات في ملف البنك',`<div class="info">في هذا الكشف خصومات. ستُكتب في ملف البنك <b>${DB.settings.dedMode==='pos'?'بالموجب مع المعادلة =I+J-K-L':'بالسالب مع إبقاء معادلة البنك =SUM(I:L)'}</b> حتى يخرج صافي الراتب صحيحاً.</div><div class="mute">إن رفض البنك الملف بسبب الخصومات غيّر الطريقة من «الإعدادات».</div>`,
+      [['متابعة التنزيل','p',()=>{DB.settings.dedOk=1;save();bankExport(m,true)}],['إلغاء']]);
+  }
+  if(DB.settings.bankType!=='xlsx'){download(bankCSV(m),bankFileName(m,'csv'));return toast('تم تنزيل ملف البنك (CSV)')}
+  makeBank(m).then(b=>{download(b,bankFileName(m));toast('تم تنزيل ملف البنك (Excel)')});
+}
+const bankFileName=(m,ext)=>(String(DB.settings.bankFile||'Salary-{month}').replace('{month}',m).replace(/[^\w.\-]+/g,'-')||'Salary-'+m)+'.'+(ext||'xlsx');
+/* ملف CSV للبنك — مطابق حرفياً لما ينتجه Excel عند «حفظ باسم CSV (محدد بفواصل)» من نموذج البنك:
+   بدون BOM، أسطر CRLF، رقم الحساب 12 خانة بأصفار بادئة (تنسيق 000000000000)، الراتب الأساسي والصافي بثلاث خانات عشرية، بدون معادلات */
+/* معاينة بنفس شكل «Salary Records» في موقع البنك — تُقرأ من نفس ملف CSV الذي سيُرفع */
+function bankPreview(m){
+  const p=DB.payroll[m];if(!p||!p.rows.length)return toast('الكشف فارغ');
+  const acct=a=>{a=String(a||'').trim();return/^\d+$/.test(a)&&a.length<12?a.padStart(12,'0'):a};
+  const d3=x=>r3(x).toFixed(3),errs=bankCheck(p);
+  const hd=['—',...BANK_HEAD.slice(1)];
+  const body=p.rows.map((r,i)=>[i+1,r.name,r.idType,r.idNo,r.bank,acct(r.acct),+r.days||0,+r.hours||0,d3(r.basic),d3(r.extra),d3(r.ded),d3(r.ss),d3(net(r))]);
+  const t=payTot(m);
+  dlg('معاينة ملف البنك — '+mName(m),`<div dir="ltr" class="tw"><table class="bankpv"><thead><tr>${hd.map((h,i)=>`<th class="${i>=8?'r':''}">${h}</th>`).join('')}</tr></thead>
+   <tbody>${body.map(r=>`<tr>${r.map((c,i)=>`<td class="${i>=8?'r':''}${i===12?' b':''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+   <tfoot><tr><td colspan="8">Total (${p.rows.length})</td><td class="r">${d3(t.basic)}</td><td class="r">${d3(t.extra)}</td><td class="r">${d3(t.ded)}</td><td class="r">${d3(t.ss)}</td><td class="r b">${d3(t.net)}</td></tr></tfoot></table></div>
+   ${errs.length?`<div class="note">تنبيهات قبل الرفع:<br>${errs.map(esc).join('<br>')}</div>`:'<div class="info">✓ لا توجد أخطاء — الملف جاهز للرفع إلى موقع البنك.</div>'}`,
+  [['⬇ تنزيل الملف','p',()=>{bankExport(m)}],['إغلاق']]);
+  $('#dlg').classList.add('wide');$('#dlg').addEventListener('close',()=>$('#dlg').classList.remove('wide'),{once:true});
+}
+function bankCSV(m){
+  const p=DB.payroll[m];
+  const q=v=>{v=String(v??'');return/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const num=x=>String(r3(x)===0?0:r3(x)),dec3=x=>r3(x).toFixed(3);
+  const acct=a=>{a=String(a||'').trim();return/^\d+$/.test(a)&&a.length<12?a.padStart(12,'0'):a};
+  const lines=[BANK_HEAD.join(',')];
+  p.rows.forEach((r,i)=>lines.push([i+1,q(r.name),q(r.idType),q(String(r.idNo||'').trim()),q(r.bank),q(acct(r.acct)),+r.days||0,+r.hours||0,dec3(r.basic),num(r.extra),num(r.ded),num(r.ss),dec3(net(r))].join(',')));
+  return new Blob([lines.join('\r\n')+'\r\n'],{type:'text/csv'});
+}
+function bankRows(p){
+  const neg=DB.settings.dedMode!=='pos';
+  const rows=[{ht:28.5,cells:BANK_HEAD.map((h,i)=>({s:h,st:i===11?1:0}))}];
+  p.rows.forEach((r,i)=>{
+    const R=i+2,d=r3(r.ded),s=r3(r.ss);
+    rows.push({cells:[{n:i+1},{s:r.name},{s:r.idType},idCell(r.idNo),{s:r.bank},idCell(r.acct,2),{n:+r.days||0},{n:+r.hours||0},{n:r.basic,st:3},{n:r.extra},{n:neg?-d:d},{n:neg?-s:s},
+      {f:neg?`SUM(I${R}:L${R})`:`I${R}+J${R}-K${R}-L${R}`,n:net(r),st:3}]});
+  });
+  return rows;
+}
+const BANK_COLS=[[2,2,22.25],[4,4,11.25],[5,5,15.875],[6,6,16.625],[7,7,14.875],[8,8,10.5],[9,9,15],[10,10,15.25],[11,11,15.5],[12,12,16.375]];
+async function makeBank(m){
+  const p=DB.payroll[m],sh={name:'جدول الرواتب',cols:BANK_COLS,rows:bankRows(p),first:true};
+  if(DB.settings.bankFormat==='single')return buildXlsx([sh],{bank:true,styles:BANK_TPL.styles,theme:BANK_TPL.theme});
+  /* نسخة طبق الأصل من ملف Excel الأصلي: كل الأجزاء كما هي، ويتغير فقط: صفوف جدول الرواتب + النصوص المشتركة + سلسلة الحساب + تاريخ التعديل */
+  const parts=BANK_TPL.parts.map(([n,v])=>[n,v.b?Uint8Array.from(atob(v.b),c=>c.charCodeAt(0)):v.t]);
+  const get=n=>parts.find(x=>x[0]===n)[1],put=(n,v)=>{parts.find(x=>x[0]===n)[1]=v};
+  const P=new DOMParser();
+  const orig=[...P.parseFromString(get('xl/sharedStrings.xml'),'application/xml').getElementsByTagName('si')].map(si=>[...si.getElementsByTagName('t')].map(t=>t.textContent).join(''));
+  let other=0;parts.forEach(([n,v])=>{if(/^xl\/worksheets\/sheet[2-9]\d*\.xml$/.test(n)){other+=(v.match(/t="s"/g)||[]).length;put(n,v.replace(/ tabSelected="1"/g,''))}});
+  const sst=makeSST(orig,other);
+  put('xl/worksheets/sheet1.xml',sheetXml(sh,sst,{bank:true}));
+  put('xl/sharedStrings.xml',sst.xml());
+  if(parts.some(x=>x[0]==='xl/calcChain.xml'))put('xl/calcChain.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<calcChain xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+p.rows.map((r,i)=>`<c r="M${i+2}"${i?'':' i="1"'}/>`).join('')+'</calcChain>');
+  put('xl/workbook.xml',get('xl/workbook.xml').replace(/activeTab="\d+"/,'activeTab="0"'));
+  const now=new Date().toISOString().replace(/\.\d+Z$/,'Z');
+  put('docProps/core.xml',get('docProps/core.xml').replace(/(<dcterms:modified[^>]*>)[^<]*/,'$1'+now));
+  return zip(parts);
+}
+
+/* ---------- الكشف الداخلي / تصدير كل البيانات (مع التصحيحات) ---------- */
+const IN_STYLES=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="#,##0.000"/><numFmt numFmtId="165" formatCode="0"/></numFmts>
+<fonts count="2"><font><sz val="11"/><name val="Arial"/><family val="2"/><charset val="178"/></font><font><b/><sz val="11"/><name val="Arial"/><family val="2"/><charset val="178"/></font></fonts>
+<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDDEBE2"/><bgColor indexed="64"/></patternFill></fill></fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF999999"/></left><right style="thin"><color rgb="FF999999"/></right><top style="thin"><color rgb="FF999999"/></top><bottom style="thin"><color rgb="FF999999"/></bottom><diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="6"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>
+<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
+<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
+<xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
+<xf numFmtId="164" fontId="1" fillId="2" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/></cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+const H=a=>({ht:30,cells:a.map(s=>({s,st:1}))});
+const T=s=>({s:s??'',st:2}),N=x=>({n:+x||0,st:3}),I=x=>({n:+x||0,st:4}),ID=x=>idCell(x,4);
+function paySheet(months){
+  const rows=[H(['الشهر','ت','اسم العامل','نوع الهوية','رقم الهوية','البنك المستلم','رقم الحساب','أيام العمل','الساعات الإضافية','الراتب الأساسي','الدخل الإضافي','الخصم','خصم التأمينات','صافي الراتب','الصرف'])];
+  months.forEach(m=>{const st=rows.length+1;
+    DB.payroll[m].rows.forEach((r,i)=>{const R=rows.length+1;
+      rows.push({cells:[T(m),I(i+1),T(r.name),T(r.idType),ID(r.idNo),T(r.bank),ID(r.acct),I(r.days),I(r.hours),N(r.basic),N(r.extra),N(r.ded),N(r.ss),{f:`J${R}+K${R}-L${R}-M${R}`,n:net(r),st:3},T(r.paid?'تم':'لم يصرف')]})});
+    const en=rows.length,t=payTot(m),R=en+1;
+    rows.push({cells:[{s:'إجمالي '+m,st:5},null,null,null,null,null,null,null,null,...['J','K','L','M','N'].map((c,k)=>({f:`SUM(${c}${st}:${c}${en})`,n:[t.basic,t.extra,t.ded,t.ss,t.net][k],st:5})),null]});
+  });
+  return{name:'الرواتب',freeze:1,cols:[[1,1,10],[2,2,5],[3,3,26],[4,7,15],[8,15,13]],rows};
+}
+function internalExport(m){
+  const months=m?[m]:Object.keys(DB.payroll).sort();
+  const sh=[paySheet(months)];
+  if(!m){
+    const pr=[H(['الشهر','ت','أسم العامل','الرقم المدني','المبلغ الشهري','الملاحظات','دفع لا / نعم','تاريخ الدفع'])];
+    Object.keys(DB.profits).sort().forEach(k=>DB.profits[k].forEach((r,i)=>pr.push({cells:[T(k),I(i+1),T(r.name),ID(r.idNo),N(r.amount),T(r.notes),T(r.paid?'نعم':'لا'),T(r.payDate)]})));
+    sh.push({name:'الأرباح',freeze:1,cols:[[1,2,9],[3,3,26],[4,8,15]],rows:pr});
+    const ex=[H(['ت','نوع المعاملة','المبلغ','من قام بالدفع','التاريخ','الجهة المستلمة','ملاحظات'])];
+    [...DB.expenses].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).forEach((x,i)=>ex.push({cells:[I(i+1),T(x.type),N(x.amount),T(x.payer),T(x.date),T(x.recipient),T(x.notes)]}));
+    if(ex.length>1)ex.push({cells:[{s:'الإجمالي',st:5},{s:'',st:5},{f:`SUM(C2:C${ex.length})`,n:DB.expenses.reduce((s,x)=>s+(+x.amount||0),0),st:5}]});
+    sh.push({name:'المصروفات',freeze:1,cols:[[1,1,6],[2,7,18]],rows:ex});
+    const wk=[H(['ت','التاريخ','نوع العمل','الجهة / العميل','القيمة','المستلم','المتبقي','الحالة','ملاحظات'])];
+    [...DB.works].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).forEach((w,i)=>{const R=wk.length+1;wk.push({cells:[I(i+1),T(w.date),T(w.type),T(w.client),N(w.value),N(w.received),{f:`E${R}-F${R}`,n:(+w.value||0)-(+w.received||0),st:3},T(w.status),T(w.notes)]})});
+    sh.push({name:'الأعمال',freeze:1,cols:[[1,1,6],[2,9,16]],rows:wk});
+    const sm=[H(['الشهر','الأعمال المحصلة','الأرباح المحصلة','الرواتب','المصروفات','الصافي'])];
+    const all=new Set([...Object.keys(DB.payroll),...Object.keys(DB.profits),...DB.expenses.map(x=>(x.date||'').slice(0,7)),...DB.works.map(x=>(x.date||'').slice(0,7))].filter(Boolean));
+    [...all].sort().forEach(k=>{const s=monthSummary(k),R=sm.length+1;sm.push({cells:[T(k),N(s.work),N(s.prof),N(s.sal),N(s.ex),{f:`B${R}+C${R}-D${R}-E${R}`,n:s.net,st:3}]})});
+    sh.push({name:'الملخص',freeze:1,cols:[[1,6,16]],rows:sm});
+    const em=[H(['ت','اسم العامل','الاسم بالعربي','المهنة','الجنسية','نوع الهوية','رقم الهوية',...DOCS.map(d=>'انتهاء '+d[1]),'البنك','رقم الحساب','الراتب الأساسي','المبلغ الشهري','الهاتف','الحالة','ملاحظات'])];
+    DB.emps.forEach((e,i)=>em.push({cells:[I(i+1),T(e.name),T(e.nameAr),T(e.profession),T(e.nationality),T(e.idType),ID(e.idNo),...DOCS.map(([k])=>T((e.exp||{})[k])),T(e.bank),ID(e.acct),N(e.basic),N(e.fee),T(e.phone),T(e.active?'نشط':'موقوف'),T(e.notes)]}));
+    const dc=[H(['ت','الوثيقة','الرقم','التفاصيل','الجهة المصدرة','خاصة بعامل','تاريخ الإصدار','تاريخ الانتهاء','الحالة','مبلغ التجديد','مجموع ما صُرف','ملاحظات'])];
+    (DB.docs||[]).forEach((x,i)=>{const e=x.emp&&emp(x.emp),n=daysTo(x.expiry);dc.push({cells:[I(i+1),T(x.type),T(x.number),T(x.details),T(x.issuer),T(e?e.name:''),T(x.issue),T(x.expiry),T(x.closed?'ملغاة':n==null?'':leftTxt(n)),N(x.amount),N((x.history||[]).reduce((s,h)=>s+(+h.cost||0),0)),T(x.notes)]})});
+    sh.splice(1,0,{name:'الوثائق',freeze:1,cols:[[1,1,5],[2,3,16],[4,4,34],[5,12,15]],rows:dc});
+    sh.splice(1,0,{name:'العمال',freeze:1,cols:[[1,1,5],[2,2,26],[3,19,15]],rows:em});
+  }
+  download(buildXlsx(sh,{styles:IN_STYLES}),m?`${DB.settings.company} - كشف داخلي ${m}.xlsx`:`${DB.settings.company} - كل البيانات ${today()}.xlsx`);
+}
+
+/* ================= استيراد ملف رواتب بنكي ================= */
+async function unzip(buf){
+  const u=new Uint8Array(buf),v=new DataView(buf),out={},dec=new TextDecoder();
+  let e=u.length-22;while(e>=0&&v.getUint32(e,true)!==0x06054b50)e--;if(e<0)throw new Error('ليس ملف xlsx');
+  let p=v.getUint32(e+16,true);const cnt=v.getUint16(e+10,true);
+  for(let k=0;k<cnt;k++){
+    const meth=v.getUint16(p+10,true),cs=v.getUint32(p+20,true),nl=v.getUint16(p+28,true),xl=v.getUint16(p+30,true),cl=v.getUint16(p+32,true),lo=v.getUint32(p+42,true);
+    const name=dec.decode(u.subarray(p+46,p+46+nl));p+=46+nl+xl+cl;
+    const ds=lo+30+v.getUint16(lo+26,true)+v.getUint16(lo+28,true),raw=u.subarray(ds,ds+cs);
+    out[name]=async()=>{if(meth===0)return dec.decode(raw);const s=new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'));return dec.decode(await new Response(s).arrayBuffer())};
+  }
+  return out;
+}
+async function importBank(f){
+  try{
+    let grid=[];
+    if(/\.csv$/i.test(f.name)){
+      const txt=(await f.text()).replace(/^\uFEFF/,'');let row=[],cur='',qt=false;
+      for(let i=0;i<txt.length;i++){const ch=txt[i];
+        if(qt){if(ch==='"'){if(txt[i+1]==='"'){cur+='"';i++}else qt=false}else cur+=ch}
+        else if(ch==='"')qt=true;else if(ch===','){row.push(cur);cur=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&txt[i+1]==='\n')i++;row.push(cur);cur='';grid.push(row);row=[]}else cur+=ch}
+      if(cur||row.length){row.push(cur);grid.push(row)}
+    }else{
+    const z=await unzip(await f.arrayBuffer()),P=new DOMParser();
+    const ss=z['xl/sharedStrings.xml']?[...P.parseFromString(await z['xl/sharedStrings.xml'](),'application/xml').getElementsByTagName('si')].map(si=>[...si.getElementsByTagName('t')].map(t=>t.textContent).join('')):[];
+    const doc=P.parseFromString(await z['xl/worksheets/sheet1.xml'](),'application/xml');
+    [...doc.getElementsByTagName('c')].forEach(c=>{const ref=c.getAttribute('r'),m=ref.match(/^([A-Z]+)(\d+)$/);let col=0;for(const ch of m[1])col=col*26+ch.charCodeAt(0)-64;
+      const t=c.getAttribute('t'),vEl=c.getElementsByTagName('v')[0],isEl=c.getElementsByTagName('is')[0];
+      let val=t==='s'?ss[+vEl.textContent]:t==='inlineStr'?(isEl?isEl.textContent:''):vEl?vEl.textContent:'';
+      (grid[+m[2]-1]=grid[+m[2]-1]||[])[col-1]=val});
+    }
+    const head=(grid[0]||[]).map(h=>String(h||'').trim().toLowerCase());
+    const ix=k=>{const i=head.indexOf(BANK_HEAD[k].toLowerCase());return i<0?k:i};
+    const data=grid.slice(1).filter(r=>r&&r[ix(1)]);
+    if(!data.length)throw new Error('لا توجد صفوف عمال في الملف');
+    dlg('استيراد ملف رواتب',`<div class="info">وُجد ${data.length} عامل في الملف «${esc(f.name)}».</div><div class="fg"><label class="full">إلى كشف شهر<input type="month" name="m" value="${curMonth()}"></label></div>
+     <div class="mute" style="font-size:13px">العمال غير الموجودين يُضافون إلى «العمال» تلقائياً. إذا كان للشهر كشف سابق فسيُستبدل.</div>`,
+    [['استيراد','p',()=>{
+      const m=fv('m');if(!m)return false;if(DB.payroll[m]&&!confirm('كشف '+mName(m)+' موجود — استبداله؟'))return false;
+      const g=(r,k)=>String(r[ix(k)]??'').trim(),num=(r,k)=>+g(r,k)||0;let added=0;
+      const rows=data.map(r=>{
+        const o={name:g(r,1),idType:g(r,2)||'Civil ID',idNo:g(r,3),bank:g(r,4),acct:/^\d+$/.test(g(r,5))?g(r,5).replace(/^0+(?=\d)/,''):g(r,5)};
+        let e=DB.emps.find(x=>(o.idNo&&x.idNo===o.idNo)||(o.acct&&x.acct===o.acct)||x.name===o.name);
+        if(!e){e={id:uid(),...o,basic:r3(num(r,8)),ss:Math.abs(r3(num(r,11))),hourRate:0,fee:0,phone:'',active:true,notes:''};DB.emps.push(e);added++}
+        return{...snap(e),...o,days:num(r,6),hours:num(r,7),basic:r3(num(r,8)),extra:r3(num(r,9)),ded:Math.abs(r3(num(r,10))),ss:Math.abs(r3(num(r,11))),paid:false};
+      });
+      DB.payroll[m]={rows,created:Date.now()};PM=m;TAB='pay';save();render();toast(`تم الاستيراد — ${rows.length} عامل${added?'، أُضيف '+added+' عامل جديد':''}`);
+    }],['إلغاء']]);
+  }catch(e){alert('تعذر قراءة الملف: '+(e.message||e))}
+}
+
+boot().then(()=>{if(MOBILE&&location.protocol.startsWith('http'))mobileInit()});
+function mobileInit(){
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+  /* ملف مُشارك من واتساب ← «بيلسان الريف» */
+  if(/[?&]shared=1/.test(location.search)&&'caches' in window){
+    history.replaceState(null,'',location.pathname);
+    caches.open('bilsan-share').then(async c=>{const k=new URL('shared-file',location.origin+location.pathname).href,r=await c.match(k);
+      if(r){const t=await r.text();await c.delete(k);applyData(t)}}).catch(()=>{});
+  }
+}
+</script>
+</body>
+</html>

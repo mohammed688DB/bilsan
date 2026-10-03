@@ -92,6 +92,11 @@ const BANK_TPL={"styles": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\
 const SEED={"emps":[]};
 const MOBILE=true;
 const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+/* أعمدة ملف CSV في موقع البنك (خيار «CSV File») — حرفياً من رسالة البنك، وهي أعمدة نظام حماية الأجور WPS */
+const WPS_HEAD=['Employee ID Type','Employee ID','Reference Number','Employee Name','Employee BIC Code','Employee Account','Salary Frequency','Number of Working days','Net Salary','Basic Salary','Extra hours','Extra income','Deductions','Social Security Deductions','Notes / Comments'];
+const BICS=[[/sohar/i,'BSHROMRU'],[/muscat/i,'BMUSOMRX'],[/national bank|nbo/i,'NBOMOMRX'],[/dhofar/i,'BDOFOMRU'],[/oman arab|oab/i,'OMABOMRU'],[/hsbc/i,'BBMEOMRX'],[/ahli/i,'AUBOOMRU'],[/nizwa/i,'BNZWOMRX'],[/izz/i,'IZZBOMRU'],[/housing/i,'OHBLOMRX'],[/development/i,'ODBLOMRX']];
+const bicOf=(bank,own)=>String(own||'').trim().toUpperCase()||(BICS.find(([re])=>re.test(String(bank||'')))||[,''])[1];
+const idCode=t=>DB.settings.idCode==='text'?String(t||''):/pass/i.test(t)?'P':'C';
 const BANK_HEAD=['NO','Employee Name','ID Type','ID Number','ReceivingBank','Account Number','Working Days','Extra Hours','Basic Salary','Extra Income','Deduction','Social Security Deduction','Net Salary'];
 const WSTAT=['جديد','قيد التنفيذ','منجز','مدفوع','ملغي'];
 const $=s=>document.querySelector(s);
@@ -123,7 +128,7 @@ async function pickSaveFile(){
 }
 async function relinkFile(){try{fhOk=(await FH.requestPermission({mode:'readwrite'}))==='granted'}catch(e){fhOk=false}if(fhOk)await writeFile();render()}
 async function stopFile(){FH=null;fhOk=false;await idbSet('fileH',null);render()}
-function blank(){return{v:1,updated:0,settings:{company:'بيلسان الريف المتحدة',dedMode:'neg',lastBackup:0},emps:[],payroll:{},profits:{},expenses:[],works:[],docs:[]}}
+function blank(){return{v:1,updated:0,settings:{company:'بيلسان الريف المتحدة',dedMode:'neg',lastBackup:0},emps:[],payroll:{},profits:{},expenses:[],works:[],docs:[],invoices:[]}}
 function seedDB(){
   const d=blank();
   const m=curMonth(),rows=[];
@@ -152,7 +157,7 @@ async function boot(){
 
 /* ================= مساعدات البيانات ================= */
 const emp=id=>DB.emps.find(e=>e.id===id);
-const snap=e=>({emp:e.id,name:e.name,idType:e.idType,idNo:e.idNo,bank:e.bank,acct:e.acct});
+const snap=e=>({emp:e.id,name:e.name,idType:e.idType,idNo:e.idNo,bank:e.bank,acct:e.acct,bic:e.bic||'',ref:e.ref||''});
 const net=r=>r3((+r.basic||0)+(+r.extra||0)-(+r.ded||0)-(+r.ss||0));
 function payTot(m){const p=DB.payroll[m];const t={n:0,basic:0,extra:0,ded:0,ss:0,net:0,paid:0};if(!p)return t;p.rows.forEach(r=>{t.n++;t.basic+=+r.basic||0;t.extra+=+r.extra||0;t.ded+=+r.ded||0;t.ss+=+r.ss||0;t.net+=net(r);if(r.paid)t.paid+=net(r)});return t}
 function profTot(m){const l=DB.profits[m]||[];let all=0,paid=0;l.forEach(r=>{all+=+r.amount||0;if(r.paid)paid+=+r.amount||0});return{all,paid,rest:all-paid,n:l.length}}
@@ -276,15 +281,15 @@ function printDocs(onlyAlerts){
 }
 
 /* ================= الواجهة ================= */
-const TABS=[['home','الرئيسية'],['emps','العمال'],['docs','الوثائق'],['pay','الرواتب'],['prof','الأرباح'],['exp','المصروفات'],['work','الأعمال'],['rep','التقارير'],['set','الإعدادات والنسخ']];
+const TABS=[['home','الرئيسية'],['emps','العمال'],['docs','الوثائق'],['pay','الرواتب'],['prof','الأرباح'],['exp','المصروفات'],['work','الأعمال'],['inv','الفواتير'],['rep','التقارير'],['set','الإعدادات والنسخ']];
 let TAB='home',PM=null,FM=null,EM='',WF='',RY=null;
 function go(t){TAB=t;render();scrollTo(0,0)}
 function render(){
-  autoSync();
+  autoSync();syncInvoices();
   $('#coName').textContent=DB.settings.company||'بيلسان الريف المتحدة';
   const na=expAlerts().length,nd=coAlerts().length;
   $('#nav').innerHTML=TABS.map(([k,t])=>`<button class="${k===TAB?'on':''}" onclick="go('${k}')">${t}${k==='emps'&&na?` <span class="badge">${na}</span>`:''}${k==='docs'&&nd?` <span class="badge">${nd}</span>`:''}</button>`).join('');
-  $('#main').innerHTML=(FH&&!fhOk?`<div class="note">الحفظ التلقائي في ملف الجهاز متوقف حتى تسمح به مرة أخرى بعد فتح التطبيق. <button class="sm" onclick="relinkFile()">السماح بالحفظ في الملف</button></div>`:'')+({home:vHome,emps:vEmps,pay:vPay,prof:vProf,exp:vExp,work:vWork,rep:vRep,set:vSet,docs:vDocs})[TAB]();
+  $('#main').innerHTML=(FH&&!fhOk?`<div class="note">الحفظ التلقائي في ملف الجهاز متوقف حتى تسمح به مرة أخرى بعد فتح التطبيق. <button class="sm" onclick="relinkFile()">السماح بالحفظ في الملف</button></div>`:'')+({home:vHome,emps:vEmps,pay:vPay,prof:vProf,exp:vExp,work:vWork,rep:vRep,set:vSet,docs:vDocs,inv:vInv})[TAB]();
   if(TAB==='set'&&navigator.storage&&navigator.storage.persisted)navigator.storage.persisted().then(ok=>{const e=$('#pst');if(e)e.textContent=ok?'التخزين دائم على هذا الجهاز ✓':'التخزين غير مضمون الدوام — لا تمسح بيانات المتصفح، وخذ نسخة احتياطية.'});
 }
 function dlg(title,body,btns){
@@ -321,6 +326,7 @@ function vHome(){
    <button onclick="empForm()">+ عامل جديد</button>
    <button onclick="expForm()">+ مصروف</button>
    <button onclick="workForm()">+ عمل جديد</button>
+   <button onclick="go('inv')">🧾 الفواتير والسندات</button>
   </div></div>`;
 }
 
@@ -351,6 +357,8 @@ function empForm(id){
    <label>رقم الهوية<input name="idNo" class="ltr" inputmode="numeric" value="${esc(e.idNo)}"></label>
    <label>البنك المستلم<input name="bank" list="dlBK" value="${esc(e.bank)}"></label>
    <label>رقم الحساب<input name="acct" class="ltr" inputmode="numeric" value="${esc(e.acct)}"></label>
+   <label>رمز البنك BIC (يُملأ تلقائياً)<input name="bic" class="ltr" placeholder="${esc(bicOf(e.bank))||'BSHROMRU'}" value="${esc(e.bic)}"></label>
+   <label>الرقم المرجعي (Reference — اختياري)<input name="ref" class="ltr" value="${esc(e.ref)}"></label>
    <label>الراتب الأساسي<input name="basic" type="number" step="0.001" value="${e.basic||0}"></label>
    <label>خصم التأمينات الشهري<input name="ss" type="number" step="0.001" value="${e.ss||0}"></label>
    <label>أجر الساعة الإضافية<input name="hourRate" type="number" step="0.001" value="${e.hourRate||0}"></label>
@@ -360,7 +368,7 @@ function empForm(id){
    <label class="full">ملاحظات<textarea name="notes" rows="2">${esc(e.notes)}</textarea></label>
   </div>${dl('dlPR',['عامل','عامل زراعي','سائق','بنّاء','نجار','حداد','كهربائي','سباك','صباغ','فني','مزارع','حارس',...DB.emps.map(x=>x.profession)])}${dl('dlNA',['بنغلاديش','الهند','باكستان','نيبال','سريلانكا','الفلبين','مصر','اليمن','السودان',...DB.emps.map(x=>x.nationality)])}${dl('dlIT',['Civil ID','Passport',...DB.emps.map(x=>x.idType)])}${dl('dlBK',['sohar International','Bank Muscat','National Bank of Oman','Bank Dhofar','Oman Arab Bank','HSBC Oman','Ahli Bank','Bank Nizwa',...DB.emps.map(x=>x.bank)])}`,
   [['حفظ','p',()=>{
-    const o={name:fv('name'),nameAr:fv('nameAr'),idType:fv('idType')||'Civil ID',idNo:fv('idNo'),bank:fv('bank'),acct:fv('acct'),basic:r3(fv('basic')),ss:r3(fv('ss')),hourRate:r3(fv('hourRate')),fee:r3(fv('fee')),phone:fv('phone'),active:fv('active')==='1',notes:fv('notes'),
+    const o={name:fv('name'),nameAr:fv('nameAr'),idType:fv('idType')||'Civil ID',idNo:fv('idNo'),bank:fv('bank'),acct:fv('acct'),bic:fv('bic').toUpperCase(),ref:fv('ref'),basic:r3(fv('basic')),ss:r3(fv('ss')),hourRate:r3(fv('hourRate')),fee:r3(fv('fee')),phone:fv('phone'),active:fv('active')==='1',notes:fv('notes'),
       profession:fv('profession'),nationality:fv('nationality'),exp:Object.fromEntries(DOCS.map(([k])=>[k,fv('x_'+k)]))};
     if(!o.name){toast('اكتب اسم العامل');return false}
     let e,old=null;
@@ -427,7 +435,7 @@ function vPay(){
    <td>${i+1}</td><td class="ltr" style="text-align:right">${esc(r.name)}</td><td>${esc(r.idType)}</td><td class="n">${esc(r.idNo)}</td><td>${esc(r.bank)}</td><td class="n">${esc(r.acct)}</td>
    <td>${inp(i,'days',r.days,'w')}</td><td>${inp(i,'hours',r.hours,'w')}</td><td>${inp(i,'basic',r.basic)}</td><td>${inp(i,'extra',r.extra)}</td><td>${inp(i,'ded',r.ded)}</td><td>${inp(i,'ss',r.ss)}</td>
    <td class="n"><b>${money(net(r))}</b></td>
-   <td><label><input type="checkbox" style="width:auto" ${r.paid?'checked':''} onchange="payEdit(${i},'paid',this.checked)"> ${r.paid?'<span class="tag ok">صُرف</span>':'<span class="tag warn">لم يُصرف</span>'}</label></td>
+   <td><label><input type="checkbox" style="width:auto" ${r.paid?'checked':''} onchange="payEdit(${i},'paid',this.checked)"> ${r.paid?'<span class="tag ok">صُرف</span>':'<span class="tag warn">لم يُصرف</span>'}</label>${r.paid?` <button class="sm" onclick="invOpen('${salKey(PM,r)}')" title="سند صرف الراتب">🧾</button>`:''}</td>
    <td><button class="sm d" onclick="payDel(${i})" title="إزالة من الكشف">✕</button></td></tr>`).join('');
   return top+`<div class="card"><div class="row"><h2 style="margin:0">رواتب ${mName(PM)}</h2><span class="sp"></span>
    <button onclick="bankPreview('${PM}')">👁 معاينة ملف البنك</button>
@@ -444,18 +452,18 @@ function vPay(){
   <tbody>${rows||'<tr><td colspan="15" class="empty">الكشف فارغ</td></tr>'}</tbody>
   <tfoot><tr><td colspan="8">الإجمالي (${t.n} عامل)</td><td class="n">${money(t.basic)}</td><td class="n">${money(t.extra)}</td><td class="n">${money(t.ded)}</td><td class="n">${money(t.ss)}</td><td class="n">${money(t.net)}</td><td colspan="2">المصروف ${money(t.paid)}</td></tr></tfoot></table></div>
   <div class="info">صافي الراتب = الراتب الأساسي + الدخل الإضافي − الخصم − خصم التأمينات. الخصومات تُكتب هنا بالموجب.<br>
-  ${DB.settings.bankType==='xlsx'?`ملف البنك Excel بنفس نموذج البنك. الخصومات فيه: <b>${DB.settings.dedMode==='neg'?'بالسالب مع إبقاء معادلة SUM':'بالموجب مع تصحيح المعادلة'}</b>.`:'ملف البنك <b>CSV</b> بنفس أعمدة نموذج البنك الـ13 وترتيبها — مطابق لما يحفظه Excel من النموذج بصيغة CSV. الخصومات بالموجب وصافي الراتب رقم محسوب.'} صيغة الملف تُغيّر من «الإعدادات».</div></div>`;
+  ${DB.settings.bankType==='xlsx'?`ملف البنك Excel بنفس نموذج البنك. الخصومات فيه: <b>${DB.settings.dedMode==='neg'?'بالسالب مع إبقاء معادلة SUM':'بالموجب مع تصحيح المعادلة'}</b>.`:`ملف البنك <b>CSV</b> ${csvWps()?'بأعمدة البنك الـ15 (WPS) — اختر في موقع البنك «CSV File»':'بأعمدة النموذج القديم الـ13'}. الخصومات بالموجب وصافي الراتب رقم محسوب.`} صيغة الملف تُغيّر من «الإعدادات».</div></div>`;
 }
 function newPay(){const m=$('#newM').value;if(!m)return;if(DB.payroll[m]){PM=m;render();return toast('الكشف موجود')}createPayroll(m);PM=m;render();toast('تم إنشاء كشف '+mName(m))}
 function payEdit(i,k,v){
   const r=DB.payroll[PM].rows[i];
-  if(k==='paid')r.paid=v;else r[k]=k==='days'||k==='hours'?(+v||0):r3(v);
+  if(k==='paid'){r.paid=v;r.payDate=v?today():''}else r[k]=k==='days'||k==='hours'?(+v||0):r3(v);
   if(k==='hours'){const e=emp(r.emp);if(e&&e.hourRate)r.extra=r3(r.hours*e.hourRate)}
   save();render();
 }
 function payDel(i){if(!confirm('إزالة العامل من كشف هذا الشهر؟'))return;const p=DB.payroll[PM],r=p.rows[i];if(r.emp)(p.removed=p.removed||[]).push(r.emp);p.rows.splice(i,1);save();render()}
 function payDelMonth(){if(!confirm('حذف كشف رواتب '+mName(PM)+' بالكامل؟'))return;delete DB.payroll[PM];PM=null;save();render()}
-function payAllPaid(){DB.payroll[PM].rows.forEach(r=>r.paid=true);save();render()}
+function payAllPaid(){DB.payroll[PM].rows.forEach(r=>{if(!r.paid){r.paid=true;r.payDate=today()}});save();render()}
 function payRefresh(){let n=0;DB.payroll[PM].rows.forEach(r=>{const e=emp(r.emp);if(e){Object.assign(r,snap(e));n++}});save();render();toast('تم تحديث '+n+' عامل')}
 function payProrate(){
   if(!confirm('سيُحسب الراتب الأساسي لكل عامل = راتبه في بيانات العمال × أيام العمل ÷ 30. متابعة؟'))return;
@@ -488,7 +496,7 @@ function vProf(){
   const rows=l.map((r,i)=>`<tr><td>${i+1}</td><td class="ltr" style="text-align:right">${esc(r.name)}</td><td class="n">${esc(r.idNo)}</td>
    <td><input type="number" step="0.001" value="${r.amount}" onchange="profEdit(${i},'amount',this.value)"></td>
    <td><input style="width:200px" value="${esc(r.notes)}" onchange="profEdit(${i},'notes',this.value)"></td>
-   <td><select onchange="profEdit(${i},'paid',this.value==='1')"><option value="0">لا</option><option value="1" ${r.paid?'selected':''}>نعم</option></select> ${r.paid?`<span class="tag ok">مدفوع${r.payDate?' '+r.payDate:''}</span>`:'<span class="tag bad">غير مدفوع</span>'}</td>
+   <td><select onchange="profEdit(${i},'paid',this.value==='1')"><option value="0">لا</option><option value="1" ${r.paid?'selected':''}>نعم</option></select> ${r.paid?`<span class="tag ok">مدفوع${r.payDate?' '+r.payDate:''}</span> <button class="sm" onclick="invOpen('prof:${FM}:${r.id}')" title="سند القبض">🧾</button>`:'<span class="tag bad">غير مدفوع</span>'}</td>
    <td><button class="sm d" onclick="profDel(${i})">✕</button></td></tr>`).join('');
   return top+`<div class="card"><div class="row"><h2 style="margin:0">أرباح ${mName(FM)}</h2><span class="sp"></span>
    <button class="sm" onclick="profAdd()">+ إضافة عامل</button><button class="sm" onclick="printProf('${FM}')">🖨 طباعة</button><button class="sm d" onclick="if(confirm('حذف كشف الشهر؟')){delete DB.profits[FM];FM=null;save();render()}">حذف كشف الشهر</button></div>
@@ -523,7 +531,7 @@ function vExp(){
    <select onchange="EM=this.value;render()"><option value="">كل الأشهر</option>${ms.map(m=>`<option value="${m}" ${m===EM?'selected':''}>${mName(m)}</option>`).join('')}</select>
    <span class="sp"></span><button class="sm" onclick="printExp()">🖨 طباعة</button><button class="p" onclick="expForm()">+ مصروف</button></div>
   <div class="tw" style="margin-top:10px"><table><thead><tr><th>ت</th><th>نوع المعاملة</th><th class="n">المبلغ</th><th>من قام بالدفع</th><th>التاريخ</th><th>الجهة المستلمة</th><th>ملاحظات</th><th></th></tr></thead>
-  <tbody>${l.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.type)}</td><td class="n">${money(x.amount)}</td><td>${esc(x.payer)}</td><td>${esc(x.date)}</td><td>${esc(x.recipient)}</td><td>${esc(x.notes)}</td><td><button class="sm" onclick="expForm('${x.id}')">تعديل</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">لا توجد مصروفات</td></tr>'}</tbody>
+  <tbody>${l.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.type)}</td><td class="n">${money(x.amount)}</td><td>${esc(x.payer)}</td><td>${esc(x.date)}</td><td>${esc(x.recipient)}</td><td>${esc(x.notes)}</td><td><button class="sm" onclick="expForm('${x.id}')">تعديل</button> <button class="sm" onclick="invOpen('exp:${x.id}')" title="سند الصرف">🧾</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">لا توجد مصروفات</td></tr>'}</tbody>
   <tfoot><tr><td colspan="2">الإجمالي</td><td class="n">${money(tot)}</td><td colspan="5"></td></tr></tfoot></table></div></div>
   ${Object.keys(byT).length?`<div class="card"><h2>حسب نوع المعاملة</h2>${Object.entries(byT).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row" style="margin:4px 0"><span style="width:160px">${esc(k)}</span><div style="flex:1"><div class="bar e" style="width:${Math.max(2,v/tot*100)}%"></div></div><span class="ltr" style="width:110px;text-align:left">${money(v)}</span></div>`).join('')}</div>`:''}`;
 }
@@ -556,7 +564,7 @@ function vWork(){
    <select onchange="WF=this.value;render()"><option value="">كل الحالات</option>${WSTAT.map(s=>`<option ${s===WF?'selected':''}>${s}</option>`).join('')}</select>
    <span class="sp"></span><button class="sm" onclick="printWork()">🖨 طباعة</button><button class="p" onclick="workForm()">+ عمل جديد</button></div>
   <div class="tw" style="margin-top:10px"><table><thead><tr><th>ت</th><th>التاريخ</th><th>نوع العمل</th><th>الجهة / العميل</th><th class="n">القيمة</th><th class="n">المستلم</th><th class="n">المتبقي</th><th>الحالة</th><th></th></tr></thead>
-  <tbody>${l.map((w,i)=>`<tr><td>${i+1}</td><td>${esc(w.date)}</td><td>${esc(w.type)}</td><td>${esc(w.client)}</td><td class="n">${money(w.value)}</td><td class="n">${money(w.received)}</td><td class="n">${w.status==='ملغي'?'—':money((+w.value||0)-(+w.received||0))}</td><td>${stTag(w.status)}</td><td><button class="sm" onclick="workForm('${w.id}')">تعديل</button></td></tr>`).join('')||'<tr><td colspan="9" class="empty">لا توجد أعمال</td></tr>'}</tbody>
+  <tbody>${l.map((w,i)=>`<tr><td>${i+1}</td><td>${esc(w.date)}</td><td>${esc(w.type)}</td><td>${esc(w.client)}</td><td class="n">${money(w.value)}</td><td class="n">${money(w.received)}</td><td class="n">${w.status==='ملغي'?'—':money((+w.value||0)-(+w.received||0))}</td><td>${stTag(w.status)}</td><td><button class="sm" onclick="workForm('${w.id}')">تعديل</button> <button class="sm" onclick="workInvoice('${w.id}')">🧾 فاتورة</button>${(w.pays||[]).length?` <button class="sm" onclick="workReceipts('${w.id}')">سندات القبض (${w.pays.length})</button>`:''}</td></tr>`).join('')||'<tr><td colspan="9" class="empty">لا توجد أعمال</td></tr>'}</tbody>
   <tfoot><tr><td colspan="4">الإجمالي</td><td class="n">${money(tv)}</td><td class="n">${money(tr)}</td><td class="n">${money(tv-tr)}</td><td colspan="2"></td></tr></tfoot></table></div></div>`;
 }
 function workForm(id){
@@ -574,7 +582,7 @@ function workForm(id){
   [['حفظ','p',()=>{const o={date:fv('date')||today(),type:fv('type'),client:fv('client'),value:r3(fv('value')),received:r3(fv('received')),status:fv('status'),notes:fv('notes')};
     if(!o.type){toast('اكتب نوع العمل');return false}
     if(o.status==='مدفوع'&&o.received<o.value)o.received=o.value;
-    if(id)Object.assign(w,o);else DB.works.push({id:uid(),...o});save();render();toast('تم الحفظ')}],['إلغاء'],
+    let x=w;if(id)Object.assign(w,o);else{x={id:uid(),...o,pays:[]};DB.works.push(x)}workPays(x,id?null:o.date);save();render();toast('تم الحفظ')}],['إلغاء'],
    ...(id?[['حذف','d',()=>{if(!confirm('حذف العمل؟'))return false;DB.works=DB.works.filter(e=>e.id!==id);save();render()}]]:[])]);
 }
 function printWork(){
@@ -616,11 +624,25 @@ function vSet(){
   return `<div class="card"><h2>بيانات المؤسسة</h2><div class="fg">
    <label class="full">اسم المؤسسة<input value="${esc(s.company)}" onchange="DB.settings.company=this.value;save();render()"></label>
    <label>التنبيه قبل انتهاء الوثائق بـ (يوم)<input type="number" min="1" value="${alertDays()}" onchange="DB.settings.alertDays=Math.max(1,+this.value||30);save();render()"></label></div></div>
+  <div class="card"><h2>بيانات الفاتورة</h2>
+   <div class="info">تظهر في رأس وتذييل كل فاتورة وسند قبض وسند صرف.</div>
+   <div class="fg">
+    <label>رقم السجل التجاري<input class="ltr" placeholder="${esc(crFromDocs()||'')}" value="${esc(s.coCR)}" onchange="DB.settings.coCR=this.value;save()"></label>
+    <label>الهاتف<input class="ltr" value="${esc(s.coPhone)}" onchange="DB.settings.coPhone=this.value;save()"></label>
+    <label class="full">العنوان<input value="${esc(s.coAddr)}" placeholder="مثلاً: سلطنة عمان — صحار" onchange="DB.settings.coAddr=this.value;save()"></label>
+    <label>البريد الإلكتروني<input class="ltr" value="${esc(s.coEmail)}" onchange="DB.settings.coEmail=this.value;save()"></label>
+    <label>اسم المحاسب / المفوَّض بالتوقيع<input value="${esc(s.signer)}" onchange="DB.settings.signer=this.value;save()"></label>
+    <label class="full">ملاحظة أسفل الفاتورة (اختياري)<input value="${esc(s.invNote)}" onchange="DB.settings.invNote=this.value;save()"></label></div>
+   <div class="row" style="margin-top:10px">${s.logo?`<img src="${s.logo}" style="height:54px;border-radius:8px;border:1px solid var(--line)">`:''}<button onclick="pickFile('image/*',setLogo)">${s.logo?'تغيير الشعار':'+ إضافة شعار المؤسسة'}</button>${s.logo?'<button class="d" onclick="DB.settings.logo=\'\';save();render()">حذف الشعار</button>':''}<button onclick="invSample()">👁 معاينة شكل الفاتورة</button></div></div>
   <div class="card"><h2>ملف البنك</h2>
    <h3 style="font-size:15px;margin:4px 0">صيغة ملف البنك</h3>
    <label style="display:block;margin:6px 0"><input type="radio" name="bt" ${s.bankType!=='xlsx'?'checked':''} onchange="DB.settings.bankType='csv';save();render()"> <b>CSV</b> — الصيغة التي يقبلها تطبيق البنك (موصى به)</label>
    <label style="display:block;margin:6px 0"><input type="radio" name="bt" ${s.bankType==='xlsx'?'checked':''} onchange="DB.settings.bankType='xlsx';save();render()"> Excel (xlsx)</label>
-   <div class="mute" style="font-size:13px;margin-bottom:10px">ملف CSV: نفس الأعمدة الـ13 بالإنجليزية وبنفس الترتيب، بدون معادلات، رقم الحساب 12 خانة، الراتب بثلاث خانات عشرية، والخصومات بالموجب — مطابق حرفياً لما يحفظه Excel من نموذج البنك بصيغة «CSV (محدد بفواصل)».</div>
+   <div class="fg" style="margin:8px 0">
+    <label>أعمدة ملف CSV<select onchange="DB.settings.csvLayout=this.value;save();render()"><option value="wps">أعمدة البنك WPS — 15 عموداً (موصى به)</option><option value="old" ${s.csvLayout==='old'?'selected':''}>أعمدة نموذج Excel القديم — 13 عموداً</option></select></label>
+    <label>Employee ID Type<select onchange="DB.settings.idCode=this.value;save();render()"><option value="code">رمز: C للبطاقة المدنية / P للجواز</option><option value="text" ${s.idCode==='text'?'selected':''}>نص كما في بيانات العامل (Civil ID)</option></select></label>
+    <label>Salary Frequency<select onchange="DB.settings.salFreq=this.value;save()"><option value="M">M — شهري</option><option value="B" ${s.salFreq==='B'?'selected':''}>B — نصف شهري</option></select></label></div>
+   <div class="mute" style="font-size:13px;margin-bottom:10px">ملف CSV بأعمدة البنك الـ15 بالترتيب الذي طلبه موقع البنك: Employee ID Type, Employee ID, Reference Number, Employee Name, Employee BIC Code, Employee Account, Salary Frequency, Number of Working days, Net Salary, Basic Salary, Extra hours, Extra income, Deductions, Social Security Deductions, Notes / Comments — بدون معادلات، المبالغ بثلاث خانات عشرية، والخصومات بالموجب.</div>
    <h3 style="font-size:15px;margin:4px 0">إعدادات ملف Excel</h3>
    <div class="info">ملف البنك يُبنى من ملف Excel الأصلي نفسه «بيلسان الريف المتحدة.xlsx» — نفس الأوراق والأعمدة والتنسيق — ولا يتغير فيه إلا صفوف العمال في «جدول الرواتب». ويفتح على ورقة «جدول الرواتب».</div>
    <label style="display:block;margin:6px 0"><input type="radio" name="bf" ${s.bankFormat!=='single'?'checked':''} onchange="DB.settings.bankFormat='copy';save()"> <b>نسخة طبق الأصل</b> من الملف الأصلي (الأوراق الأربع كما هي) — موصى به</label>
@@ -661,6 +683,214 @@ function applyData(text){
     if(!empty&&DB.updated&&d.updated&&d.updated<DB.updated)msg='⚠ هذا الملف أقدم من البيانات الموجودة على هذا الجهاز!\n\n'+msg;
     if(!empty&&!confirm(msg))return;
     DB=d;TAB='home';DB.settings=Object.assign(blank().settings,DB.settings||{});DB.docs=DB.docs||[];save();render();toast('تم استلام البيانات')}catch(e){alert('الملف غير صالح')}
+}
+
+/* ================= الفواتير وسندات القبض والصرف =================
+   كل دفعة في التطبيق (مصروف، راتب مصروف، أرباح مدفوعة، دفعة عمل) لها سند برقم متسلسل يُنشأ تلقائياً.
+   syncInvoices() تقرأ المدفوعات من مصادرها في كل عرض: تنشئ سنداً لكل دفعة جديدة، وتحدّث بياناته إن عُدّلت الدفعة،
+   وتعلّمه «ملغى» إن حُذفت الدفعة (الرقم لا يُعاد استخدامه). فاتورة العمل للعميل تُنشأ عند الطلب. */
+const INVT={out:'سند صرف',in:'سند قبض',inv:'فاتورة'},INVP={out:'ص',in:'ق',inv:'ف'};
+const salKey=(m,r)=>`sal:${m}:${r.emp||r.name}`;
+const crFromDocs=()=>((DB.docs||[]).find(x=>x.type==='السجل التجاري'&&!x.closed&&x.number)||{}).number||'';
+function workPays(w,firstDate){
+  w.pays=w.pays||[];const sum=w.pays.reduce((s,p)=>s+(+p.amount||0),0),rec=r3(w.received);
+  if(rec>sum+0.0005)w.pays.push({id:uid(),date:firstDate||today(),amount:r3(rec-sum)});
+  else if(rec<sum-0.0005){let over=r3(sum-rec);for(let i=w.pays.length-1;i>=0&&over>0;i--){const p=w.pays[i],c=Math.min(p.amount,over);p.amount=r3(p.amount-c);over=r3(over-c);if(!p.amount)w.pays.splice(i,1)}}
+}
+function paySources(){
+  const S=[];
+  DB.expenses.forEach(x=>S.push({key:'exp:'+x.id,kind:'out',date:x.date,party:x.recipient||'—',desc:[x.type,x.notes].filter(Boolean).join(' — '),amount:r3(x.amount),method:'نقداً',by:x.payer||''}));
+  Object.keys(DB.payroll).forEach(m=>DB.payroll[m].rows.forEach(r=>{if(r.paid)S.push({key:salKey(m,r),kind:'out',date:r.payDate||m+'-28',party:r.name,
+    desc:`راتب شهر ${mName(m)} — ${r.days} يوم عمل`,amount:net(r),method:'تحويل بنكي',
+    sal:{m,bank:r.bank,acct:r.acct,basic:r3(r.basic),extra:r3(r.extra),ded:r3(r.ded),ss:r3(r.ss),hours:+r.hours||0}})}));
+  Object.keys(DB.profits).forEach(m=>DB.profits[m].forEach(r=>{if(r.paid)S.push({key:`prof:${m}:${r.id}`,kind:'in',date:r.payDate||m+'-01',party:r.name,
+    desc:`المبلغ الشهري — ${mName(m)}${r.notes?' — '+r.notes:''}`,amount:r3(r.amount),method:'نقداً'})}));
+  DB.works.forEach(w=>{
+    if(!w.pays&&+w.received>0)w.pays=[{id:uid(),date:w.date||today(),amount:r3(w.received)}];
+    (w.pays||[]).forEach((p,i)=>S.push({key:'wpay:'+p.id,kind:'in',date:p.date,party:w.client||'—',desc:`دفعة ${i+1} عن: ${w.type}${w.notes?' — '+w.notes:''}`,amount:r3(p.amount),method:'نقداً',work:w.id}));
+    if((DB.invoices||[]).some(v=>v.key==='winv:'+w.id))S.push({key:'winv:'+w.id,kind:'inv',date:w.date,party:w.client||'—',desc:w.type+(w.notes?' — '+w.notes:''),amount:r3(w.value),method:'',work:w.id,
+      wk:{value:r3(w.value),received:r3(w.received),status:w.status}});
+  });
+  return S;
+}
+const FIELDS=['date','party','desc','amount','by','sal','work','wk'];
+function syncInvoices(){
+  if(!DB)return;DB.invoices=DB.invoices||[];DB.invSeq=DB.invSeq||{out:0,in:0,inv:0};
+  const S=paySources(),seen=new Set(),byKey=new Map(DB.invoices.map(v=>[v.key,v]));let ch=false;const fresh=[];
+  S.forEach(s=>{seen.add(s.key);const v=byKey.get(s.key);
+    if(!v){fresh.push(s);return}
+    FIELDS.forEach(f=>{const a=JSON.stringify(v[f]??null),b=JSON.stringify(s[f]??null);if(a!==b){v[f]=s[f];ch=true}});
+    if(v.void){v.void=false;ch=true}});
+  DB.invoices.forEach(v=>{if(!seen.has(v.key)&&!v.void){v.void=true;v.voidDate=today();ch=true}});
+  fresh.sort((a,b)=>(a.date||'').localeCompare(b.date||'')).forEach(s=>{const n=++DB.invSeq[s.kind];
+    DB.invoices.push({id:uid(),no:INVP[s.kind]+'-'+String(n).padStart(4,'0'),...s,created:Date.now()});ch=true});
+  if(ch)save();
+}
+function workInvoice(id){
+  syncInvoices();const key='winv:'+id;
+  if(!DB.invoices.some(v=>v.key===key)){const w=DB.works.find(x=>x.id===id);const n=++DB.invSeq.inv;
+    DB.invoices.push({id:uid(),no:'ف-'+String(n).padStart(4,'0'),key,kind:'inv',date:w.date||today(),party:w.client||'—',desc:w.type,amount:r3(w.value),method:'',work:id,created:Date.now()});syncInvoices();save()}
+  invOpen(key);
+}
+function workReceipts(id){
+  syncInvoices();const w=DB.works.find(x=>x.id===id),l=(w.pays||[]).map(p=>DB.invoices.find(v=>v.key==='wpay:'+p.id)).filter(Boolean);
+  dlg('سندات القبض — '+w.type,`<div class="tw"><table><thead><tr><th>الرقم</th><th>التاريخ</th><th class="n">المبلغ</th><th></th></tr></thead><tbody>${l.map(v=>`<tr><td><b>${v.no}</b></td><td>${esc(v.date)}</td><td class="n">${money(v.amount)}</td><td><button class="sm" onclick="invOpen('${v.key}')">🧾 عرض</button></td></tr>`).join('')}</tbody></table></div>`,[['إغلاق','p']]);
+}
+
+/* ---- المبلغ كتابةً (ريال عماني وبيسة) ---- */
+function arWords(n){
+  n=Math.floor(n);if(!n)return'صفر';
+  const O=['','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة','عشرة','أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر'];
+  const TN=['','','عشرون','ثلاثون','أربعون','خمسون','ستون','سبعون','ثمانون','تسعون'];
+  const HN=['','مائة','مائتان','ثلاثمائة','أربعمائة','خمسمائة','ستمائة','سبعمائة','ثمانمائة','تسعمائة'];
+  const u1000=x=>{const h=Math.floor(x/100),r=x%100,p=[];if(h)p.push(HN[h]);if(r){if(r<20)p.push(O[r]);else{const u=r%10,t=Math.floor(r/10);p.push(u?O[u]+' و'+TN[t]:TN[t])}}return p.join(' و')};
+  const grp=(x,one,two,few,many)=>x===1?one:x===2?two:x<=10?u1000(x)+' '+few:u1000(x)+' '+many;
+  const p=[],b=Math.floor(n/1e9),m=Math.floor(n/1e6)%1000,k=Math.floor(n/1000)%1000,r=n%1000;
+  if(b)p.push(grp(b,'مليار','ملياران','مليارات','مليار'));
+  if(m)p.push(grp(m,'مليون','مليونان','ملايين',m%100>=11?'مليوناً':'مليون'));
+  if(k)p.push(grp(k,'ألف','ألفان','آلاف',k%100>=11?'ألفاً':'ألف'));
+  if(r)p.push(u1000(r));
+  return p.join(' و');
+}
+function amountWords(x){
+  x=r3(x);const ri=Math.floor(x+1e-9),bz=Math.round((x-ri)*1000);
+  const unit=(n,one,two,few,many)=>{if(n===1)return one+' واحد';if(n===2)return two;const r=n%100;return arWords(n)+' '+(r>=3&&r<=10?few:r>=11?many:one)};
+  const p=[];if(ri)p.push(unit(ri,'ريال عماني','ريالان عمانيان','ريالات عمانية','ريالاً عمانياً'));
+  if(bz)p.push(bz===1?'بيسة واحدة':bz===2?'بيستان':arWords(bz)+' بيسة');
+  return 'فقط '+(p.join(' و')||'صفر ريال')+' لا غير';
+}
+
+/* ---- شكل الفاتورة (HTML للعرض والطباعة) ---- */
+function invParts(v){
+  const s=DB.settings,cr=s.coCR||crFromDocs();
+  const who=v.kind==='out'?'صرفنا إلى السيد/ة':v.kind==='in'?'استلمنا من السيد/ة':'فاتورة إلى';
+  const rows=[[who,v.party]];
+  if(v.kind==='inv'){const k=v.wk||{value:v.amount,received:0};rows.push(['البيان',v.desc]);rows.push(['قيمة العمل',money(k.value)+' ر.ع']);rows.push(['المدفوع',money(k.received)+' ر.ع']);rows.push(['المتبقي',money(k.value-k.received)+' ر.ع']);rows.push(['المبلغ كتابةً',amountWords(k.value)])}
+  else{rows.push(['مبلغاً وقدره',money(v.amount)+' ر.ع']);rows.push(['المبلغ كتابةً',amountWords(v.amount)]);rows.push(['وذلك عن',v.desc]);
+    if(v.sal)rows.push(['تفاصيل الراتب',`الأساسي ${money(v.sal.basic)}${v.sal.extra?' + إضافي '+money(v.sal.extra):''}${v.sal.ded?' − خصم '+money(v.sal.ded):''}${v.sal.ss?' − تأمينات '+money(v.sal.ss):''} = ${money(v.amount)}`]);
+    rows.push(['طريقة الدفع',(v.methodX||v.method)+(v.sal&&(v.methodX||v.method)==='تحويل بنكي'?` — ${v.sal.bank} / ${v.sal.acct}`:'')]);
+    if(v.by)rows.push(['دفعها',v.by])}
+  if(v.note)rows.push(['ملاحظات',v.note]);
+  const sig=v.kind==='out'?['توقيع المستلم','المحاسب'+(s.signer?' — '+s.signer:''),'الختم']:v.kind==='in'?['توقيع الدافع','المستلم'+(s.signer?' — '+s.signer:''),'الختم']:['المحاسب'+(s.signer?' — '+s.signer:''),'الختم'];
+  const foot=[s.coAddr,s.coPhone?'هاتف: '+s.coPhone:'',s.coEmail].filter(Boolean).join('  •  ');
+  return{title:INVT[v.kind],rows,sig,cr,foot};
+}
+function invHTML(v){
+  const s=DB.settings,P=invParts(v),G='#2f6b4f';
+  return `<div style="direction:rtl;font-family:Tahoma,Arial,sans-serif;color:#111;background:#fff;border:2px solid ${G};border-radius:10px;overflow:hidden;max-width:780px;margin:auto;position:relative">
+  <div style="background:${G};color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px">
+   <div style="flex:1"><div style="font-size:24px;font-weight:700">${esc(s.company)}</div>${P.cr?`<div style="font-size:13px;opacity:.9">سجل تجاري رقم: ${esc(P.cr)}</div>`:''}</div>
+   ${s.logo?`<img src="${s.logo}" style="height:64px;max-width:120px;object-fit:contain;background:#fff;border-radius:8px;padding:3px">`:''}</div>
+  <div style="display:flex;align-items:center;padding:14px 20px 4px">
+   <div style="flex:1;font-size:14px">التاريخ: <b><bdi dir="ltr">${esc(v.date)}</bdi></b></div>
+   <div style="font-size:24px;font-weight:700;color:${G};border-bottom:3px solid ${G};padding:0 14px 2px">${P.title}</div>
+   <div style="flex:1;text-align:left;font-size:14px">الرقم: <b style="font-size:17px;color:#b3261e"><bdi dir="ltr">${esc(v.no)}</bdi></b></div></div>
+  <table style="width:calc(100% - 40px);margin:10px 20px;border-collapse:collapse;font-size:15px">
+   ${P.rows.map(([k,x])=>`<tr><td style="width:150px;padding:9px 10px;background:#eef5f0;border:1px solid #cfdcd3;font-weight:700;vertical-align:top">${esc(k)}</td><td style="padding:9px 10px;border:1px solid #cfdcd3;${k==='مبلغاً وقدره'||k==='قيمة العمل'?'font-size:20px;font-weight:700':''}">${esc(x)}</td></tr>`).join('')}
+  </table>
+  <div style="display:flex;gap:16px;padding:22px 20px 8px">${P.sig.map(x=>`<div style="flex:1;text-align:center;font-size:13px;color:#444"><div style="border-top:1px dashed #888;margin-top:34px;padding-top:6px">${esc(x)}</div></div>`).join('')}</div>
+  ${s.invNote?`<div style="padding:0 20px 6px;font-size:12px;color:#555;text-align:center">${esc(s.invNote)}</div>`:''}
+  <div style="background:#eef5f0;color:#333;font-size:12px;padding:8px 20px;text-align:center">${esc(P.foot||s.company)}</div>
+  ${v.void?`<div style="position:absolute;top:42%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font-size:72px;font-weight:900;color:rgba(179,38,30,.28);border:8px solid rgba(179,38,30,.28);padding:0 30px;border-radius:14px">ملغاة</div>`:''}
+  </div>`;
+}
+
+/* ---- صورة PNG للفاتورة (للمشاركة على واتساب) ---- */
+async function invPNG(v){
+  const s=DB.settings,P=invParts(v),G='#2f6b4f',W=1100,F='Tahoma, Arial, sans-serif';
+  const c=document.createElement('canvas'),x=c.getContext('2d');
+  const wrap=(t,w,font)=>{x.font=font;const words=String(t??'').split(/\s+/),L=[];let cur='';words.forEach(wd=>{const n=cur?cur+' '+wd:wd;if(x.measureText(n).width>w&&cur){L.push(cur);cur=wd}else cur=n});L.push(cur);return L};
+  const KW=220,VW=W-80-KW-30,LH=34,fontV='22px '+F,fontB='bold 28px '+F;
+  const rowsL=P.rows.map(([k,val])=>{const big=k==='مبلغاً وقدره'||k==='قيمة العمل';const l=wrap(val,VW,big?fontB:fontV);return{k,l,big,h:Math.max(1,l.length)*LH+24}});
+  const H=170+90+rowsL.reduce((a,r)=>a+r.h,0)+40+130+(s.invNote?40:0)+60;
+  c.width=W;c.height=H;x.direction='rtl';x.textBaseline='middle';
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  x.fillStyle=G;x.fillRect(0,0,W,150);
+  let logoW=0;
+  if(s.logo){try{const im=new Image();im.src=s.logo;await im.decode();const h=110,w=Math.min(200,im.width*h/im.height);x.fillStyle='#fff';x.fillRect(30,20,w+12,h+12);x.drawImage(im,36,26,w,h);logoW=w+30}catch(e){}}
+  x.fillStyle='#fff';x.textAlign='right';x.font='bold 40px '+F;x.fillText(s.company,W-40,62);
+  if(P.cr){x.font='22px '+F;x.fillText('سجل تجاري رقم: '+P.cr,W-40,112)}
+  let y=210;
+  x.textAlign='center';x.fillStyle=G;x.font='bold 40px '+F;x.fillText(P.title,W/2,y);
+  const tw=x.measureText(P.title).width;x.fillRect(W/2-tw/2-14,y+30,tw+28,5);
+  x.fillStyle='#111';x.font='22px '+F;x.textAlign='right';x.fillText('التاريخ:',W-40,y);const lw=x.measureText('التاريخ:').width;
+  x.direction='ltr';x.textAlign='right';x.font='bold 22px '+F;x.fillText(v.date,W-48-lw,y);
+  x.textAlign='left';x.fillStyle='#b3261e';x.font='bold 26px '+F;x.fillText(v.no,40,y);const nw=x.measureText(v.no).width;
+  x.direction='rtl';x.fillStyle='#111';x.font='22px '+F;x.textAlign='left';x.fillText('الرقم:',48+nw,y);
+  y=280;
+  rowsL.forEach(r=>{
+    x.fillStyle='#eef5f0';x.fillRect(W-40-KW,y,KW,r.h);x.strokeStyle='#cfdcd3';x.lineWidth=2;x.strokeRect(40,y,W-80,r.h);x.beginPath();x.moveTo(W-40-KW,y);x.lineTo(W-40-KW,y+r.h);x.stroke();
+    x.fillStyle='#111';x.textAlign='right';x.font='bold 22px '+F;x.fillText(r.k,W-55,y+12+LH/2);
+    x.font=r.big?fontB:fontV;r.l.forEach((ln,i)=>x.fillText(ln,W-40-KW-15,y+12+LH/2+i*LH));
+    y+=r.h});
+  y+=60;const sw=(W-80)/P.sig.length;
+  P.sig.forEach((t,i)=>{const cx=W-40-sw*i-sw/2;x.strokeStyle='#888';x.setLineDash([6,5]);x.beginPath();x.moveTo(cx-sw/2+20,y+30);x.lineTo(cx+sw/2-20,y+30);x.stroke();x.setLineDash([]);
+    x.fillStyle='#444';x.textAlign='center';x.font='20px '+F;x.fillText(t,cx,y+58)});
+  y+=110;
+  if(s.invNote){x.fillStyle='#555';x.font='18px '+F;x.textAlign='center';x.fillText(s.invNote,W/2,y);y+=40}
+  x.fillStyle='#eef5f0';x.fillRect(0,H-56,W,56);x.fillStyle='#333';x.font='18px '+F;x.textAlign='center';x.fillText(P.foot||s.company,W/2,H-28);
+  x.strokeStyle=G;x.lineWidth=6;x.strokeRect(3,3,W-6,H-6);
+  if(v.void){x.save();x.translate(W/2,H/2);x.rotate(-0.3);x.fillStyle='rgba(179,38,30,.28)';x.font='900 120px '+F;x.textAlign='center';x.fillText('ملغاة',0,0);x.restore()}
+  return new Promise(res=>c.toBlob(res,'image/png'));
+}
+async function invShare(id){
+  const v=DB.invoices.find(z=>z.id===id),b=await invPNG(v),name=`${INVT[v.kind]} ${v.no}.png`;
+  try{const f=new File([b],name,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:name});return}}catch(e){if(e&&e.name==='AbortError')return}
+  download(b,name);toast('تم حفظ صورة '+INVT[v.kind]);
+}
+function invPrint(id){const v=DB.invoices.find(z=>z.id===id);printRaw(`${INVT[v.kind]} ${v.no}`,invHTML(v))}
+function invOpen(key){
+  syncInvoices();const v=DB.invoices.find(z=>z.key===key||z.id===key);if(!v)return toast('لا يوجد سند لهذه الدفعة');
+  dlg(`${INVT[v.kind]} ${v.no}`,`<div style="overflow:auto">${invHTML(v)}</div>`,
+   [['🖨 طباعة','p',()=>{invPrint(v.id);return false}],['📷 حفظ صورة / مشاركة','',()=>{invShare(v.id);return false}],...(v.kind==='inv'?[]:[['تعديل','',()=>{setTimeout(()=>invEdit(v.id),0)}]]),['إغلاق']]);
+  $('#dlg').classList.add('wide');$('#dlg').addEventListener('close',()=>$('#dlg').classList.remove('wide'),{once:true});
+}
+function invEdit(id){
+  const v=DB.invoices.find(z=>z.id===id),M=['نقداً','تحويل بنكي','شيك','بطاقة','أخرى'],cur=v.methodX||v.method;
+  dlg(`تعديل ${INVT[v.kind]} ${v.no}`,`<div class="fg"><label>طريقة الدفع<select name="m">${M.map(x=>`<option ${x===cur?'selected':''}>${x}</option>`).join('')}</select></label>
+   <label class="full">ملاحظات على السند<input name="note" value="${esc(v.note)}"></label></div>
+   <div class="mute" style="font-size:13px">المبلغ والجهة والتاريخ تأتي من الدفعة نفسها — عدّلها من صفحتها (المصروفات / الرواتب / الأرباح / الأعمال) ويتحدث السند تلقائياً.</div>`,
+   [['حفظ','p',()=>{v.methodX=fv('m');v.note=fv('note');save();setTimeout(()=>invOpen(v.id),0)}],['إلغاء']]);
+}
+function invSample(){
+  const v={no:INVP.out+'-0000',kind:'out',date:today(),party:'اسم المستلم',desc:'مثال على البيان',amount:125.5,method:'نقداً'};
+  dlg('معاينة شكل الفاتورة',`<div style="overflow:auto">${invHTML(v)}</div>`,[['إغلاق','p']]);
+  $('#dlg').classList.add('wide');$('#dlg').addEventListener('close',()=>$('#dlg').classList.remove('wide'),{once:true});
+}
+async function setLogo(f){
+  try{const im=new Image();im.src=URL.createObjectURL(f);await im.decode();const k=Math.min(1,300/Math.max(im.width,im.height));
+    const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    DB.settings.logo=c.toDataURL('image/png');save();render();toast('تم حفظ الشعار')}catch(e){alert('تعذر قراءة الصورة')}
+}
+
+/* ---- صفحة الفواتير ---- */
+let IK='',IM='';
+function vInv(){
+  syncInvoices();
+  const all=DB.invoices,ms=uniq(all.map(v=>(v.date||'').slice(0,7))).sort().reverse();
+  const l=all.filter(v=>(!IK||v.kind===IK)&&(!IM||(v.date||'').startsWith(IM))).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.no.localeCompare(a.no));
+  const ok=l.filter(v=>!v.void),tin=ok.filter(v=>v.kind==='in').reduce((s,v)=>s+v.amount,0),tout=ok.filter(v=>v.kind==='out').reduce((s,v)=>s+v.amount,0);
+  return `<div class="tiles">
+   <div class="tile"><div class="k">سندات القبض</div><div class="v">${money(tin)}</div><div class="s">${ok.filter(v=>v.kind==='in').length} سند</div></div>
+   <div class="tile"><div class="k">سندات الصرف</div><div class="v">${money(tout)}</div><div class="s">${ok.filter(v=>v.kind==='out').length} سند</div></div>
+   <div class="tile"><div class="k">فواتير الأعمال</div><div class="v">${ok.filter(v=>v.kind==='inv').length}</div><div class="s">من صفحة الأعمال ← 🧾 فاتورة</div></div></div>
+  <div class="card"><div class="row"><h2 style="margin:0">الفواتير والسندات</h2>
+   <select onchange="IK=this.value;render()"><option value="">كل الأنواع</option>${Object.entries(INVT).map(([k,t])=>`<option value="${k}" ${k===IK?'selected':''}>${t}</option>`).join('')}</select>
+   <select onchange="IM=this.value;render()"><option value="">كل الأشهر</option>${ms.map(m=>`<option value="${m}" ${m===IM?'selected':''}>${mName(m)}</option>`).join('')}</select>
+   <span class="sp"></span><button class="sm" onclick="printInvList()">🖨 طباعة القائمة</button></div>
+  <div class="info">يُنشأ سند تلقائياً لكل دفعة: المصروفات (سند صرف)، الرواتب عند «تم الصرف» (سند صرف لكل عامل)، الأرباح المدفوعة (سند قبض)، والمبالغ المستلمة من الأعمال (سند قبض لكل دفعة). إذا حُذفت الدفعة يبقى السند برقمه ويُعلَّم «ملغى».</div>
+  <div class="tw"><table><thead><tr><th>الرقم</th><th>النوع</th><th>التاريخ</th><th>الجهة</th><th>البيان</th><th class="n">المبلغ</th><th>الحالة</th><th></th></tr></thead>
+  <tbody>${l.map(v=>`<tr style="${v.void?'opacity:.5':''}"><td><b><bdi dir="ltr">${esc(v.no)}</bdi></b></td><td><span class="tag ${v.kind==='in'?'ok':v.kind==='out'?'warn':'mu'}">${INVT[v.kind]}</span></td><td>${esc(v.date)}</td><td>${esc(v.party)}</td><td style="white-space:normal;min-width:180px">${esc(v.desc)}</td><td class="n">${money(v.amount)}</td><td>${v.void?'<span class="tag bad">ملغى</span>':'<span class="tag ok">ساري</span>'}</td>
+   <td><button class="sm" onclick="invOpen('${v.id}')">🧾 عرض</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">لا توجد سندات بعد</td></tr>'}</tbody></table></div></div>`;
+}
+function printInvList(){
+  const l=DB.invoices.filter(v=>(!IK||v.kind===IK)&&(!IM||(v.date||'').startsWith(IM))).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  printHTML('الفواتير والسندات'+(IM?' — '+mName(IM):''),`<table><thead><tr><th>الرقم</th><th>النوع</th><th>التاريخ</th><th>الجهة</th><th>البيان</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody>${l.map(v=>`<tr><td>${esc(v.no)}</td><td>${INVT[v.kind]}</td><td>${esc(v.date)}</td><td>${esc(v.party)}</td><td>${esc(v.desc)}</td><td>${money(v.amount)}</td><td>${v.void?'ملغى':'ساري'}</td></tr>`).join('')}</tbody></table>`,true);
+}
+function printRaw(title,body){
+  const d=$('#pf').contentDocument;
+  d.open();d.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>${esc(title)}</title><style>@page{size:A4 portrait;margin:12mm}body{margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${body}</body></html>`);
+  d.close();setTimeout(()=>$('#pf').contentWindow.print(),300);
 }
 
 /* ================= الطباعة ================= */
@@ -766,6 +996,7 @@ function bankCheck(p){
     if(!String(r.bank||'').trim())errs.push(w+'اسم البنك المستلم فارغ');
     if(!/^\d+$/.test(String(r.acct||'').trim()))errs.push(w+'رقم الحساب فارغ أو فيه رموز/مسافات');
     else if(String(r.acct).trim().length>15)errs.push(w+'رقم الحساب أطول من 15 رقماً — راجعه');
+    if(DB.settings.bankType!=='xlsx'&&DB.settings.csvLayout!=='old'&&!bicOf(r.bank,r.bic))errs.push(w+'رمز البنك BIC غير معروف — اكتبه في بيانات العامل');
     if(!(+r.basic>0))errs.push(w+'الراتب الأساسي صفر');
     if(!(net(r)>0))errs.push(w+'صافي الراتب صفر أو سالب');
   });
@@ -794,18 +1025,27 @@ function bankPreview(m){
   const p=DB.payroll[m];if(!p||!p.rows.length)return toast('الكشف فارغ');
   const acct=a=>{a=String(a||'').trim();return/^\d+$/.test(a)&&a.length<12?a.padStart(12,'0'):a};
   const d3=x=>r3(x).toFixed(3),errs=bankCheck(p);
-  const hd=['—',...BANK_HEAD.slice(1)];
-  const body=p.rows.map((r,i)=>[i+1,r.name,r.idType,r.idNo,r.bank,acct(r.acct),+r.days||0,+r.hours||0,d3(r.basic),d3(r.extra),d3(r.ded),d3(r.ss),d3(net(r))]);
-  const t=payTot(m);
-  dlg('معاينة ملف البنك — '+mName(m),`<div dir="ltr" class="tw"><table class="bankpv"><thead><tr>${hd.map((h,i)=>`<th class="${i>=8?'r':''}">${h}</th>`).join('')}</tr></thead>
-   <tbody>${body.map(r=>`<tr>${r.map((c,i)=>`<td class="${i>=8?'r':''}${i===12?' b':''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>
-   <tfoot><tr><td colspan="8">Total (${p.rows.length})</td><td class="r">${d3(t.basic)}</td><td class="r">${d3(t.extra)}</td><td class="r">${d3(t.ded)}</td><td class="r">${d3(t.ss)}</td><td class="r b">${d3(t.net)}</td></tr></tfoot></table></div>
+  const t=payTot(m),W=csvWps()&&DB.settings.bankType!=='xlsx';
+  const hd=W?WPS_HEAD:['—',...BANK_HEAD.slice(1)],R=W?[8,9,11,12,13]:[8,9,10,11,12],B=W?8:12;
+  const body=W?wpsRows(p):p.rows.map((r,i)=>[i+1,r.name,r.idType,r.idNo,r.bank,acct(r.acct),+r.days||0,+r.hours||0,d3(r.basic),d3(r.extra),d3(r.ded),d3(r.ss),d3(net(r))]);
+  const foot=W?`<td colspan="8">Total (${p.rows.length})</td><td class="r b">${d3(t.net)}</td><td class="r">${d3(t.basic)}</td><td></td><td class="r">${d3(t.extra)}</td><td class="r">${d3(t.ded)}</td><td class="r">${d3(t.ss)}</td><td></td>`
+    :`<td colspan="8">Total (${p.rows.length})</td><td class="r">${d3(t.basic)}</td><td class="r">${d3(t.extra)}</td><td class="r">${d3(t.ded)}</td><td class="r">${d3(t.ss)}</td><td class="r b">${d3(t.net)}</td>`;
+  dlg('معاينة ملف البنك — '+mName(m),`<div dir="ltr" class="tw"><table class="bankpv"><thead><tr>${hd.map((h,i)=>`<th class="${R.includes(i)||i===B?'r':''}">${h}</th>`).join('')}</tr></thead>
+   <tbody>${body.map(r=>`<tr>${r.map((c,i)=>`<td class="${R.includes(i)||i===B?'r':''}${i===B?' b':''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+   <tfoot><tr>${foot}</tr></tfoot></table></div>
    ${errs.length?`<div class="note">تنبيهات قبل الرفع:<br>${errs.map(esc).join('<br>')}</div>`:'<div class="info">✓ لا توجد أخطاء — الملف جاهز للرفع إلى موقع البنك.</div>'}`,
   [['⬇ تنزيل الملف','p',()=>{bankExport(m)}],['إغلاق']]);
   $('#dlg').classList.add('wide');$('#dlg').addEventListener('close',()=>$('#dlg').classList.remove('wide'),{once:true});
 }
+function wpsRows(p){
+  const d3=x=>r3(x).toFixed(3),acct=a=>{a=String(a||'').trim();return/^\d+$/.test(a)&&a.length<12?a.padStart(12,'0'):a};
+  return p.rows.map((r,i)=>[idCode(r.idType),String(r.idNo||'').trim(),r.ref||String(i+1),r.name,bicOf(r.bank,r.bic),acct(r.acct),DB.settings.salFreq||'M',+r.days||0,d3(net(r)),d3(r.basic),+r.hours||0,d3(r.extra),d3(r.ded),d3(r.ss),r.note||'']);
+}
+const csvWps=()=>DB.settings.csvLayout!=='old';
 function bankCSV(m){
   const p=DB.payroll[m];
+  if(csvWps()){const q=v=>{v=String(v??'');return/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+    return new Blob([[WPS_HEAD.join(','),...wpsRows(p).map(r=>r.map(q).join(','))].join('\r\n')+'\r\n'],{type:'text/csv'})}
   const q=v=>{v=String(v??'');return/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
   const num=x=>String(r3(x)===0?0:r3(x)),dec3=x=>r3(x).toFixed(3);
   const acct=a=>{a=String(a||'').trim();return/^\d+$/.test(a)&&a.length<12?a.padStart(12,'0'):a};
@@ -891,6 +1131,9 @@ function internalExport(m){
     DB.emps.forEach((e,i)=>em.push({cells:[I(i+1),T(e.name),T(e.nameAr),T(e.profession),T(e.nationality),T(e.idType),ID(e.idNo),...DOCS.map(([k])=>T((e.exp||{})[k])),T(e.bank),ID(e.acct),N(e.basic),N(e.fee),T(e.phone),T(e.active?'نشط':'موقوف'),T(e.notes)]}));
     const dc=[H(['ت','الوثيقة','الرقم','التفاصيل','الجهة المصدرة','خاصة بعامل','تاريخ الإصدار','تاريخ الانتهاء','الحالة','مبلغ التجديد','مجموع ما صُرف','ملاحظات'])];
     (DB.docs||[]).forEach((x,i)=>{const e=x.emp&&emp(x.emp),n=daysTo(x.expiry);dc.push({cells:[I(i+1),T(x.type),T(x.number),T(x.details),T(x.issuer),T(e?e.name:''),T(x.issue),T(x.expiry),T(x.closed?'ملغاة':n==null?'':leftTxt(n)),N(x.amount),N((x.history||[]).reduce((s,h)=>s+(+h.cost||0),0)),T(x.notes)]})});
+    const iv=[H(['الرقم','النوع','التاريخ','الجهة','البيان','المبلغ','طريقة الدفع','الحالة'])];
+    [...(DB.invoices||[])].sort((a,b)=>(a.date||'').localeCompare(b.date||'')||a.no.localeCompare(b.no)).forEach(v=>iv.push({cells:[T(v.no),T(INVT[v.kind]),T(v.date),T(v.party),T(v.desc),N(v.amount),T(v.method),T(v.void?'ملغاة':'سارية')]}));
+    sh.push({name:'الفواتير',freeze:1,cols:[[1,4,15],[5,5,40],[6,8,14]],rows:iv});
     sh.splice(1,0,{name:'الوثائق',freeze:1,cols:[[1,1,5],[2,3,16],[4,4,34],[5,12,15]],rows:dc});
     sh.splice(1,0,{name:'العمال',freeze:1,cols:[[1,1,5],[2,2,26],[3,19,15]],rows:em});
   }
@@ -929,8 +1172,11 @@ async function importBank(f){
       (grid[+m[2]-1]=grid[+m[2]-1]||[])[col-1]=val});
     }
     const head=(grid[0]||[]).map(h=>String(h||'').trim().toLowerCase());
-    const ix=k=>{const i=head.indexOf(BANK_HEAD[k].toLowerCase());return i<0?k:i};
+    const isW=head.includes('employee id type');
+    const WMAP={1:3,2:0,3:1,5:5,6:7,7:10,8:9,9:11,10:12,11:13};
+    const ix=k=>{if(isW){return k===4?-1:WMAP[k]}const i=head.indexOf(BANK_HEAD[k].toLowerCase());return i<0?k:i};
     const data=grid.slice(1).filter(r=>r&&r[ix(1)]);
+    const bicCol=isW?4:-1;
     if(!data.length)throw new Error('لا توجد صفوف عمال في الملف');
     dlg('استيراد ملف رواتب',`<div class="info">وُجد ${data.length} عامل في الملف «${esc(f.name)}».</div><div class="fg"><label class="full">إلى كشف شهر<input type="month" name="m" value="${curMonth()}"></label></div>
      <div class="mute" style="font-size:13px">العمال غير الموجودين يُضافون إلى «العمال» تلقائياً. إذا كان للشهر كشف سابق فسيُستبدل.</div>`,
@@ -938,7 +1184,8 @@ async function importBank(f){
       const m=fv('m');if(!m)return false;if(DB.payroll[m]&&!confirm('كشف '+mName(m)+' موجود — استبداله؟'))return false;
       const g=(r,k)=>String(r[ix(k)]??'').trim(),num=(r,k)=>+g(r,k)||0;let added=0;
       const rows=data.map(r=>{
-        const o={name:g(r,1),idType:g(r,2)||'Civil ID',idNo:g(r,3),bank:g(r,4),acct:/^\d+$/.test(g(r,5))?g(r,5).replace(/^0+(?=\d)/,''):g(r,5)};
+        const it=g(r,2),bic=bicCol>=0?String(r[bicCol]??'').trim().toUpperCase():'';
+        const o={name:g(r,1),idType:it==='C'?'Civil ID':it==='P'?'Passport':(it||'Civil ID'),idNo:g(r,3),bank:bicCol>=0?((DB.emps.find(x=>bicOf(x.bank,x.bic)===bic)||{}).bank||(bic==='BSHROMRU'?'Sohar International':bic)):g(r,4),acct:/^\d+$/.test(g(r,5))?g(r,5).replace(/^0+(?=\d)/,''):g(r,5)};
         let e=DB.emps.find(x=>(o.idNo&&x.idNo===o.idNo)||(o.acct&&x.acct===o.acct)||x.name===o.name);
         if(!e){e={id:uid(),...o,basic:r3(num(r,8)),ss:Math.abs(r3(num(r,11))),hourRate:0,fee:0,phone:'',active:true,notes:''};DB.emps.push(e);added++}
         return{...snap(e),...o,days:num(r,6),hours:num(r,7),basic:r3(num(r,8)),extra:r3(num(r,9)),ded:Math.abs(r3(num(r,10))),ss:Math.abs(r3(num(r,11))),paid:false};
